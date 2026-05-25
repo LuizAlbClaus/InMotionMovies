@@ -23,7 +23,7 @@ export function Hero() {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting && !videoSrc) {
-            setVideoSrc("/video/hero.mp4");
+            setVideoSrc("active");
             observer.disconnect();
           }
         });
@@ -156,7 +156,7 @@ export function Hero() {
       {/* Background Poster & Video */}
       <div className="absolute inset-0 w-full h-full z-0 select-none pointer-events-none">
         {/* Dynamic Dark Gradient Overlay to guarantee text contrast */}
-        <div className="absolute inset-0 bg-gradient-to-t from-ink-base via-ink-base/30 to-ink-abyss/80 z-10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink-base via-ink-base/30 to-ink-abyss/85 z-10" />
 
         {/* Poster Image */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -164,21 +164,20 @@ export function Hero() {
           src="/video/hero-poster.png"
           alt="Cinematic background placeholder"
           className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-            videoSrc ? "opacity-0" : "opacity-30"
+            videoSrc ? "opacity-0" : "opacity-35"
           }`}
         />
 
-        {/* Video Player */}
+        {/* Background YouTube Video Player (Muted Loop) */}
         {videoSrc && (
-          <video
-            ref={videoRef}
-            src={videoSrc}
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="absolute inset-0 w-full h-full object-cover opacity-25 transition-opacity duration-1000"
-          />
+          <div className="absolute inset-0 w-full h-full opacity-20 pointer-events-none overflow-hidden z-0">
+            <iframe
+              src="https://www.youtube.com/embed/88R8UwRvBPE?autoplay=1&mute=1&loop=1&playlist=88R8UwRvBPE&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&enablejsapi=1"
+              title="InMotion Movies Showreel Background"
+              className="absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-h-full min-w-[177.77vh] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+              allow="autoplay; encrypted-media"
+            />
+          </div>
         )}
       </div>
 
