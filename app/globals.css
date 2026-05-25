@@ -1,0 +1,107 @@
+@import url("https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap");
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Rift";
+  src: url("/fonts/RiftRegular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Rift";
+  src: url("/fonts/RiftMedium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Rift";
+  src: url("/fonts/RiftDemi.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Rift";
+  src: url("/fonts/RiftBold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --ink-abyss: #050505;
+  --ink-base: #111111;
+  --ink-raise: #1a1a1a;
+  --text-hi: #f5f5f5;
+  --text-body: #e8e8e8;
+  --text-mut: #b8b8b8;
+  --accent: #b0242f;
+  --accent-deep: #8e2433;
+}
+
+@theme {
+  --color-ink-abyss: var(--ink-abyss);
+  --color-ink-base: var(--ink-base);
+  --color-ink-raise: var(--ink-raise);
+  --color-text-hi: var(--text-hi);
+  --color-text-body: var(--text-body);
+  --color-text-mut: var(--text-mut);
+  --color-accent: var(--accent);
+  --color-accent-deep: var(--accent-deep);
+
+  --font-display: "Rift", sans-serif;
+  --font-sans: "Satoshi", sans-serif;
+}
+
+html {
+  background-color: var(--ink-base);
+}
+
+body {
+  background-color: var(--ink-base);
+  color: var(--text-body);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Global Cinematic Grain Overlay */
+.grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.05;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  filter: brightness(0.9) contrast(1.1);
+  mix-blend-mode: overlay;
+}
+
+/* Custom Premium Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--ink-abyss);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--ink-raise);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* prefers-reduced-motion standard CSS fallback */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-delay: 0s !important;
+    animation-duration: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0s !important;
+    scroll-behavior: auto !important;
+  }
+}
