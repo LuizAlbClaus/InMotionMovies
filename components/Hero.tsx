@@ -17,28 +17,10 @@ export function Hero() {
   const [videoSrc, setVideoSrc] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Lazy load video when in viewport to protect LCP
+  // Load background video immediately on client mount to ensure instant autoplay
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && !videoSrc) {
-            setVideoSrc("active");
-            observer.disconnect();
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [videoSrc]);
+    setVideoSrc("active");
+  }, []);
 
   // Magnetic button effect using GSAP (bypassed if reduced motion is enabled)
   useEffect(() => {
