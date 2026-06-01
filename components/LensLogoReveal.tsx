@@ -27,7 +27,7 @@ export function LensLogoReveal({
   /** Quando a última logo termina de resolver */
   revealEnd = 1,
   /** Altura base de cada logo em px (multiplicada pelo scale do item) */
-  baseHeight = 28,
+  baseHeight = 36,
   /** Scrim radial escuro atrás do cluster (garante legibilidade sobre fundo claro) */
   scrim = true,
 }: {
@@ -70,9 +70,12 @@ export function LensLogoReveal({
             alt={logo.company}
             loading="lazy"
             decoding="async"
+            className="object-contain"
             style={{
               height: `${baseHeight * (logo.scale ?? 1)}px`,
+              maxHeight: `${baseHeight * 1.3}px`,
               width: "auto",
+              maxWidth: "160px",
               opacity: local,
               // só opacity + transform (compositor) — sem filter blur animado (caro)
               transform: `translateY(${(1 - local) * 10}px) scale(${0.94 + local * 0.06})`,

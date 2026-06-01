@@ -2,8 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { ScrollFrameSequence } from "./ScrollFrameSequence";
-import { LensLogoReveal } from "./LensLogoReveal";
-import { heroStripLogos } from "@/lib/clientLogos";
+import { LensSealRing } from "./LensSealRing";
 
 const clamp = (v: number, min = 0, max = 1) => Math.max(min, Math.min(max, v));
 
@@ -72,6 +71,10 @@ export function LensHero() {
           const headlineOut = 1 - clamp((p - 0.04) / 0.24);
           const markIn = clamp((p - 0.5) / 0.2);
           const payoffVisible = markIn > 0.01;
+          // Promove a marca a uma camada de GPU só durante o trecho em que ela escala
+          // (0.5→0.7). Sem isso, escalar um elemento com mask-image re-rasteriza a máscara
+          // a cada quadro → cintilação no meio da animação. Um flip só, sem thrash.
+          const markActive = p > 0.46 && p < 0.74;
           return (
             <>
               {/* Fase 1 — Headline / teaser */}
@@ -88,64 +91,42 @@ export function LensHero() {
                 </h2>
               </div>
 
-              {/* Fase 2+3 — payoff: marca InMotion + logos de clientes */}
-              {isMobile ? (
-                // MOBILE: stack vertical centralizado (marca em cima, logos compactos embaixo)
+              {/* Fase 2+3 — payoff: marca InMotion no centro + ANEL de selos ao redor */}
+              <div
+                className="absolute inset-0"
+                style={{ visibility: payoffVisible ? "visible" : "hidden" }}
+              >
+                {/* scrim radial pra marca + selos destacarem do fundo da lente */}
                 <div
-                  className="absolute inset-0 flex flex-col items-center justify-center gap-7 px-6"
-                  style={{ visibility: payoffVisible ? "visible" : "hidden" }}
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0"
+                  style={{
+                    opacity: markIn * 0.92,
+                    background:
+                      "radial-gradient(ellipse 60% 60% at center, rgba(5,5,5,0.9) 0%, rgba(5,5,5,0.5) 48%, rgba(5,5,5,0) 75%)",
+                  }}
+                />
+                {/* Anel de selos (rack-focus). Oval vertical no mobile. */}
+                <LensSealRing
+                  progress={p}
+                  revealStart={0.68}
+                  radius={isMobile ? 128 : 340}
+                  radiusY={isMobile ? 180 : 160}
+                  baseHeight={isMobile ? 26 : 58}
+                />
+                {/* Marca no centro exato da íris */}
+                <div
+                  className="absolute inset-0 flex items-center justify-center"
+                  style={{
+                    opacity: markIn,
+                    transform: `scale(${0.88 + markIn * 0.12}) translateZ(0)`,
+                    willChange: markActive ? "transform, opacity" : "auto",
+                    backfaceVisibility: "hidden",
+                  }}
                 >
-                  <div
-                    aria-hidden
-                    className="pointer-events-none absolute inset-0"
-                    style={{
-                      opacity: markIn * 0.9,
-                      background:
-                        "radial-gradient(ellipse 70% 55% at center, rgba(5,5,5,0.9) 0%, rgba(5,5,5,0.55) 45%, rgba(5,5,5,0) 75%)",
-                    }}
-                  />
-                  <div
-                    style={{ opacity: markIn, transform: `scale(${0.9 + markIn * 0.1})` }}
-                  >
-                    <InMotionMark className="relative h-12 w-[220px]" />
-                  </div>
-                  <div className="relative">
-                    <LensLogoReveal
-                      progress={p}
-                      revealStart={0.7}
-                      baseHeight={15}
-                      logos={heroStripLogos.slice(0, 6)}
-                      scrim={false}
-                    />
-                  </div>
+                  <InMotionMark className="relative h-12 w-[220px] md:h-20 md:w-[380px]" />
                 </div>
-              ) : (
-                // DESKTOP: marca no centro exato da íris + logos em faixa embaixo
-                <>
-                  <div
-                    className="absolute inset-0 flex items-center justify-center"
-                    style={{
-                      opacity: markIn,
-                      transform: `scale(${0.88 + markIn * 0.12})`,
-                      visibility: payoffVisible ? "visible" : "hidden",
-                    }}
-                  >
-                    <div
-                      aria-hidden
-                      className="pointer-events-none absolute h-[55vh] w-[55vh] rounded-full"
-                      style={{
-                        opacity: markIn * 0.9,
-                        background:
-                          "radial-gradient(circle, rgba(5,5,5,0.85) 0%, rgba(5,5,5,0.4) 50%, rgba(5,5,5,0) 72%)",
-                      }}
-                    />
-                    <InMotionMark className="relative h-20 w-[380px]" />
-                  </div>
-                  <div className="absolute inset-x-0 bottom-[12%] flex justify-center">
-                    <LensLogoReveal progress={p} revealStart={0.74} baseHeight={22} />
-                  </div>
-                </>
-              )}
+              </div>
 
               {/* Dica de scroll (some assim que começa) */}
               <div

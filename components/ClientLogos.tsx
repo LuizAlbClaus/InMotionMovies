@@ -72,7 +72,7 @@ export function ClientLogos() {
             {heroStripLogos.map((logo, index) => (
               <div
                 key={`${logo.file}-${index}`}
-                className="client-logo flex items-center justify-center"
+                className="client-logo shrink-0 flex items-center justify-center w-[100px] h-[32px] md:w-[130px] md:h-[40px]"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -80,10 +80,7 @@ export function ClientLogos() {
                   alt={logo.company}
                   title={logo.company}
                   loading="lazy"
-                  style={{
-                    "--logo-scale": logo.scale ?? 1.0,
-                  } as React.CSSProperties}
-                  className="h-[calc(1.75rem*var(--logo-scale))] md:h-[calc(2.25rem*var(--logo-scale))] w-auto max-w-[150px] object-contain
+                  className="max-w-full max-h-full object-contain
                              [filter:brightness(0)_invert(1)]
                              opacity-60 hover:opacity-100
                              transition-opacity duration-300"
@@ -95,7 +92,7 @@ export function ClientLogos() {
             {heroStripLogos.map((logo, index) => (
               <div
                 key={`${logo.file}-dup-${index}`}
-                className="client-logo flex items-center justify-center"
+                className="client-logo shrink-0 flex items-center justify-center w-[100px] h-[32px] md:w-[130px] md:h-[40px]"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -103,10 +100,7 @@ export function ClientLogos() {
                   alt={logo.company}
                   title={logo.company}
                   loading="lazy"
-                  style={{
-                    "--logo-scale": logo.scale ?? 1.0,
-                  } as React.CSSProperties}
-                  className="h-[calc(1.75rem*var(--logo-scale))] md:h-[calc(2.25rem*var(--logo-scale))] w-auto max-w-[150px] object-contain
+                  className="max-w-full max-h-full object-contain
                              [filter:brightness(0)_invert(1)]
                              opacity-60 hover:opacity-100
                              transition-opacity duration-300"

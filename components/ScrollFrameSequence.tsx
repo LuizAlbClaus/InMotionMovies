@@ -160,6 +160,8 @@ export function ScrollFrameSequence({
         canvas.height = ch * dpr;
       }
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
       ctx.clearRect(0, 0, cw, ch);
 
       const ir = img.naturalWidth / img.naturalHeight;
