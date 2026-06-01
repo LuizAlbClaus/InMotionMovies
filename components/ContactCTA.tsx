@@ -47,8 +47,8 @@ export function ContactCTA() {
     };
   }, [isReduced]);
 
-  const rawPhone = "5549992199990"; // WhatsApp raw format (Brazilian country code 55 + area 49 + number)
-  const formattedPhone = "(49) 99219-9990";
+  const rawPhone = "5548992199990"; // WhatsApp raw format (Brazilian country code 55 + area 48 + number)
+  const formattedPhone = "(48) 99219-9990";
   const whatsappUrl = `https://wa.me/${rawPhone}?text=Olá%20InMotion,%20gostaria%20de%20solicitar%20um%20orçamento%20para%20minha%20marca.`;
 
   return (

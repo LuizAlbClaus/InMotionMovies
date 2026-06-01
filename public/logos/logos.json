@@ -1,0 +1,42 @@
+{
+  "_comment": "Manifesto de logos de clientes da InMotion. Consumido pelos componentes (faixa de clientes na home + paredes de logos das verticais). darkBgRender diz COMO renderizar sobre fundo escuro (#111111).",
+  "renderGuide": {
+    "mono-filter": "Logo transparente porém colorido/escuro. Renderizar uniforme em branco via CSS: filter: brightness(0) invert(1); opacity:.65; hover opacity:1. Padrão premium de faixa de clientes.",
+    "native": "Já claro/branco transparente — pode usar cor nativa sobre escuro.",
+    "needs-rework": "Fundo OPACO (jpg/gif) — vira caixa branca no escuro. NÃO usar até ter versão transparente/branca. Pedir ao cliente ou recortar no design."
+  },
+  "heroStrip": [
+    "colcci", "governo-sc", "prefeitura-florianopolis", "facisc",
+    "unicred", "coc-floripa", "caasc", "brasil-atacadista", "costao-santinho"
+  ],
+  "missing": [
+    {"company": "Colégio Tendência", "sector": "educacao", "note": "NÃO ENCONTRADO - Não localizado nas buscas oficiais/redes sociais."},
+    {"company": "Microlight World", "sector": "tecnologia", "note": "NÃO ENCONTRADO - Não localizado nas buscas oficiais/redes sociais."}
+  ],
+  "logos": [
+    {"company": "Colcci", "slug": "colcci", "sector": "fashion", "file": "logo-colcci.png", "format": "png", "transparent": true, "tier": 1, "darkBgRender": "mono-filter", "heroStrip": true, "status": "ok", "note": "Wordmark preto 1024px. Vira branco perfeito com mono-filter. (svg recebido era 404, descartado.)"},
+    {"company": "Governo do Estado de SC", "slug": "governo-sc", "sector": "governo", "file": "logo-governo-sc-white.png", "format": "png", "transparent": true, "tier": 1, "darkBgRender": "mono-filter", "heroStrip": true, "status": "ok", "note": "Versão branca monocromática transparente gerada para exibição limpa sobre escuro."},
+    {"company": "Prefeitura de Florianópolis", "slug": "prefeitura-florianopolis", "sector": "governo", "file": "logo-prefeitura-florianopolis-white.png", "format": "png", "transparent": true, "tier": 1, "darkBgRender": "mono-filter", "heroStrip": true, "status": "ok", "note": "Versão branca monocromática transparente gerada para exibição limpa sobre escuro."},
+    {"company": "FACISC", "slug": "facisc", "sector": "governo", "file": "logo-facisc.png", "format": "png", "transparent": true, "tier": 1, "darkBgRender": "mono-filter", "heroStrip": true, "status": "ok", "note": "2500px, alta qualidade."},
+    {"company": "CAASC", "slug": "caasc", "sector": "governo", "file": "logo-caasc-white.png", "format": "png", "transparent": true, "tier": 1, "darkBgRender": "mono-filter", "heroStrip": true, "status": "ok", "note": "Logo institucional oficial substituído e versão branca monocromática gerada."},
+    {"company": "Unicred", "slug": "unicred", "sector": "financas", "file": "logo-unicred.png", "format": "png", "transparent": true, "tier": 1, "darkBgRender": "mono-filter", "heroStrip": true, "status": "ok", "note": "Verde/dourado 1024px. (svg recebido tinha cores erradas/azul, descartado.)"},
+    {"company": "COC Floripa", "slug": "coc-floripa", "sector": "educacao", "file": "logo-coc-floripa-white.png", "format": "png", "transparent": true, "tier": 1, "darkBgRender": "mono-filter", "heroStrip": true, "status": "ok", "note": "Logo correto obtido de fonte oficial e versão branca monocromática gerada."},
+    {"company": "Brasil Atacadista", "slug": "brasil-atacadista", "sector": "atacado", "file": "logo-brasil-atacadista.webp", "format": "webp", "transparent": true, "tier": 1, "darkBgRender": "mono-filter", "heroStrip": true, "status": "ok"},
+    {"company": "Costão do Santinho", "slug": "costao-santinho", "sector": "hospitalidade", "file": "logo-costao-santinho-white.png", "format": "png", "transparent": true, "tier": 1, "darkBgRender": "mono-filter", "heroStrip": true, "status": "ok", "note": "Logo oficial em alta resolução obtido e versão branca monocromática gerada."},
+    {"company": "Lumma Construtora", "slug": "lumma-construtora", "sector": "construcao", "file": "logo-lumma-construtora.png", "format": "png", "transparent": true, "tier": 2, "darkBgRender": "mono-filter", "heroStrip": false, "status": "ok", "note": "872px."},
+    {"company": "Norte Construções", "slug": "norte-construcoes", "sector": "construcao", "file": "logo-norte-construcoes.png", "format": "png", "transparent": true, "tier": 2, "darkBgRender": "mono-filter", "heroStrip": false, "status": "ok", "note": "500px, médio."},
+    {"company": "Nova Fase Instalações Elétricas", "slug": "nova-fase", "sector": "construcao", "file": "logo-nova-fase-white.svg", "format": "svg", "transparent": true, "tier": 2, "darkBgRender": "mono-filter", "heroStrip": false, "status": "ok", "note": "Vetor branco monocromático gerado para exibição limpa."},
+    {"company": "Uniprime", "slug": "uniprime", "sector": "financas", "file": "logo-uniprime.png", "format": "png", "transparent": true, "tier": 2, "darkBgRender": "mono-filter", "heroStrip": false, "status": "ok", "note": "300px — pequeno; ok em parede de vertical, evitar em destaque grande."},
+    {"company": "Colégio Elisa Andreoli", "slug": "elisa-andreoli", "sector": "educacao", "file": "logo-elisa-andreoli.png", "format": "png", "transparent": true, "tier": 2, "darkBgRender": "mono-filter", "heroStrip": false, "status": "ok", "note": "512px."},
+    {"company": "Colégio Criativo", "slug": "colegio-criativo", "sector": "educacao", "file": "logo-colegio-criativo.png", "format": "png", "transparent": true, "tier": 2, "darkBgRender": "mono-filter", "heroStrip": false, "status": "ok"},
+    {"company": "Colégio Nossa Senhora de Fátima", "slug": "colegio-fatima", "sector": "educacao", "file": "logo-colegio-fatima.png", "format": "png", "transparent": true, "tier": 2, "darkBgRender": "mono-filter", "heroStrip": false, "status": "ok", "note": "Brasão Instituto N. Sra. da Piedade (confirmado como o correto para Fátima)."},
+    {"company": "Colégio Incentivo", "slug": "colegio-incentivo", "sector": "educacao", "file": "logo-colegio-incentivo.png", "format": "png", "transparent": true, "tier": 2, "darkBgRender": "mono-filter", "heroStrip": false, "status": "ok", "note": "1024px."},
+    {"company": "Colégio Conhecimento", "slug": "colegio-conhecimento", "sector": "educacao", "file": "logo-colegio-conhecimento-white.png", "format": "png", "transparent": true, "tier": 3, "darkBgRender": "mono-filter", "heroStrip": false, "status": "ok", "note": "Logo de alta resolução obtido e versão branca monocromática gerada."},
+    {"company": "Forum", "slug": "forum", "sector": "fashion", "file": "logo-forum-white.png", "format": "png", "transparent": true, "tier": 3, "darkBgRender": "mono-filter", "heroStrip": false, "status": "ok", "note": "Fundo removido e versão branca monocromática gerada."},
+    {"company": "Teltec Solutions", "slug": "teltec", "sector": "tecnologia", "file": "logo-teltec-white.png", "format": "png", "transparent": true, "tier": 3, "darkBgRender": "mono-filter", "heroStrip": false, "status": "ok", "note": "Fundo removido e versão branca monocromática gerada."},
+    {"company": "Fairyland", "slug": "fairyland", "sector": "hospitalidade", "file": "logo-fairyland-white.png", "format": "png", "transparent": true, "tier": 3, "darkBgRender": "mono-filter", "heroStrip": false, "status": "ok", "note": "Fundo removido e versão branca monocromática gerada."},
+    {"company": "MPB Engenharia", "slug": "mpb-engenharia", "sector": "construcao", "file": "logo-mpb-engenharia-white.png", "format": "png", "transparent": true, "tier": 2, "darkBgRender": "mono-filter", "heroStrip": false, "status": "ok", "note": "Logo oficial obtido de referer e versão branca monocromática gerada."},
+    {"company": "Comando Painéis Elétricos", "slug": "comando-paineis", "sector": "construcao", "file": "logo-comando-paineis-white.png", "format": "png", "transparent": true, "tier": 2, "darkBgRender": "mono-filter", "heroStrip": false, "status": "ok", "note": "Logo oficial obtido e versão branca monocromática gerada."},
+    {"company": "Criarte", "slug": "criarte", "sector": "educacao", "file": "logo-criarte-white.svg", "format": "svg", "transparent": true, "tier": 2, "darkBgRender": "mono-filter", "heroStrip": false, "status": "ok", "note": "Logo oficial SVG obtido e versão branca monocromática gerada."}
+  ]
+}

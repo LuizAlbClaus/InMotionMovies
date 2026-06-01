@@ -40,7 +40,7 @@ export function Footer() {
         <div className="flex flex-col items-center md:items-end text-center md:text-right space-y-2 text-sm text-text-mut">
           <p>Florianópolis, Santa Catarina (SC)</p>
           <p>contato@inmotionmovies.com.br</p>
-          <p>(49) 99219-9990</p>
+          <p>(48) 99219-9990</p>
         </div>
       </div>
 

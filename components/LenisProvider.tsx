@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import { ReactLenis, useLenis } from "lenis/react";
-import { gsap } from "@/lib/gsap";
+import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 
 function RafSync() {
@@ -11,13 +11,19 @@ function RafSync() {
   useEffect(() => {
     if (!lenis) return;
 
+    // Lenis dirige o scroll suave; o ScrollTrigger precisa atualizar a CADA
+    // evento de scroll do Lenis, senão o scrub (canvas da lente) engasga.
+    const onScroll = () => ScrollTrigger.update();
+    lenis.on("scroll", onScroll);
+
     const update = (time: number) => {
       lenis.raf(time * 1000);
     };
-
     gsap.ticker.add(update);
+    gsap.ticker.lagSmoothing(0);
 
     return () => {
+      lenis.off("scroll", onScroll);
       gsap.ticker.remove(update);
     };
   }, [lenis]);

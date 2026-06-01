@@ -5,24 +5,28 @@ import { gsap } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import { VideoModal } from "./VideoModal";
 
+const YT_ID = "88R8UwRvBPE";
+// youtube-nocookie + sem enablejsapi = embed mais leve para background.
+const BG_SRC = `https://www.youtube-nocookie.com/embed/${YT_ID}?autoplay=1&mute=1&loop=1&playlist=${YT_ID}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&disablekb=1`;
+
 export function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const playBtnRef = useRef<HTMLDivElement>(null);
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const subheadlineRef = useRef<HTMLParagraphElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  
+
   const isReduced = useReducedMotion();
-  const [videoSrc, setVideoSrc] = useState<string | null>(null);
+  const [showVideo, setShowVideo] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Load background video immediately on client mount to ensure instant autoplay
+  // Monta o iframe do YouTube logo após o primeiro paint (o texto/headline já é o LCP).
+  // Fundo fica preto (bg-ink-abyss) até o vídeo carregar, então faz fade-in.
   useEffect(() => {
-    setVideoSrc("active");
+    setShowVideo(true);
   }, []);
 
-  // Magnetic button effect using GSAP (bypassed if reduced motion is enabled)
+  // Magnetic button effect (bypassed se reduced motion)
   useEffect(() => {
     if (isReduced || typeof window === "undefined") return;
 
@@ -34,27 +38,13 @@ export function Hero() {
         const rect = btn.getBoundingClientRect();
         const x = e.clientX - rect.left - rect.width / 2;
         const y = e.clientY - rect.top - rect.height / 2;
-
-        gsap.to(btn, {
-          x: x * 0.35,
-          y: y * 0.35,
-          duration: 0.3,
-          ease: "power2.out",
-        });
+        gsap.to(btn, { x: x * 0.35, y: y * 0.35, duration: 0.3, ease: "power2.out" });
       };
-
       const mouseLeave = () => {
-        gsap.to(btn, {
-          x: 0,
-          y: 0,
-          duration: 0.5,
-          ease: "elastic.out(1, 0.3)",
-        });
+        gsap.to(btn, { x: 0, y: 0, duration: 0.5, ease: "elastic.out(1, 0.3)" });
       };
-
       btn.addEventListener("mousemove", mouseMove as EventListener);
       btn.addEventListener("mouseleave", mouseLeave);
-
       return () => {
         btn.removeEventListener("mousemove", mouseMove as EventListener);
         btn.removeEventListener("mouseleave", mouseLeave);
@@ -69,7 +59,6 @@ export function Hero() {
     const headline = headlineRef.current;
     if (!headline) return;
 
-    // Split text into words manually to avoid heavy external libraries
     const text = headline.textContent || "";
     headline.innerHTML = text
       .split(" ")
@@ -77,31 +66,10 @@ export function Hero() {
       .join("");
 
     const words = headline.querySelectorAll("span");
-
     const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
 
-    // 1. Play Button Reveal
-    if (playBtnRef.current) {
-      tl.fromTo(
-        playBtnRef.current,
-        { opacity: 0, scale: 0.8 },
-        { opacity: 1, scale: 1, duration: 1.0 }
-      );
-    }
+    tl.to(words, { opacity: 1, y: 0, stagger: 0.08, duration: 1.2 }, "0");
 
-    // 2. Headline Words Stagger
-    tl.to(
-      words,
-      {
-        opacity: 1,
-        y: 0,
-        stagger: 0.08,
-        duration: 1.2,
-      },
-      playBtnRef.current ? "-=0.7" : "0"
-    );
-
-    // 3. Subheadline
     if (subheadlineRef.current) {
       tl.fromTo(
         subheadlineRef.current,
@@ -111,7 +79,6 @@ export function Hero() {
       );
     }
 
-    // 4. Action Buttons
     if (buttonsRef.current) {
       tl.fromTo(
         buttonsRef.current.querySelectorAll("button"),
@@ -123,10 +90,7 @@ export function Hero() {
   }, [isReduced]);
 
   const scrollToSection = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
-    }
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -137,27 +101,24 @@ export function Hero() {
     >
       {/* Background Poster & Video */}
       <div className="absolute inset-0 w-full h-full z-0 select-none pointer-events-none">
-        {/* Dynamic Dark Gradient Overlay to guarantee text contrast */}
+        {/* Gradiente escuro para garantir contraste do texto */}
         <div className="absolute inset-0 bg-gradient-to-t from-ink-base via-ink-base/30 to-ink-abyss/85 z-10" />
 
-        {/* Poster Image */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/video/hero-poster.png"
-          alt="Cinematic background placeholder"
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-            videoSrc ? "opacity-0" : "opacity-35"
-          }`}
-        />
-
-        {/* Background YouTube Video Player (Muted Loop) */}
-        {videoSrc && (
-          <div className="absolute inset-0 w-full h-full opacity-20 pointer-events-none overflow-hidden z-0">
+        {/* Background YouTube (montado após idle, fade-in ao carregar; fundo preto até lá) */}
+        {showVideo && (
+          <div
+            className={`absolute inset-0 w-full h-full overflow-hidden z-[1] transition-opacity duration-1000 ${
+              videoLoaded ? "opacity-100" : "opacity-0"
+            }`}
+          >
             <iframe
-              src="https://www.youtube.com/embed/88R8UwRvBPE?autoplay=1&mute=1&loop=1&playlist=88R8UwRvBPE&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&enablejsapi=1"
-              title="InMotion Movies Showreel Background"
-              className="absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-h-full min-w-[177.77vh] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-              allow="autoplay; encrypted-media"
+              src={BG_SRC}
+              title="InMotion Movies Showreel"
+              loading="lazy"
+              onLoad={() => setVideoLoaded(true)}
+              className="absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-h-full min-w-[177.77vh] -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-25"
+              allow="autoplay; encrypted-media; picture-in-picture"
+              frameBorder="0"
             />
           </div>
         )}
@@ -166,50 +127,9 @@ export function Hero() {
       {/* Hero Content */}
       <div className="relative z-20 max-w-5xl mx-auto px-6 text-center flex flex-col items-center">
         {/* Accent Tag */}
-        <span className="font-display text-sm md:text-base tracking-[0.35em] text-accent uppercase mb-4 animate-pulse">
+        <span className="font-display text-sm md:text-base tracking-[0.35em] text-accent uppercase mb-6 animate-pulse">
           InMotion Movies
         </span>
-
-        {/* Big Circular Play Button (AT Agency Style) */}
-        <div
-          ref={playBtnRef}
-          onClick={() => setIsModalOpen(true)}
-          className={`magnetic-btn group mb-6 cursor-pointer focus:outline-none rounded-full ${
-            isReduced ? "opacity-100" : "opacity-0"
-          }`}
-          role="button"
-          tabIndex={0}
-          aria-label="Assistir Showreel"
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              setIsModalOpen(true);
-            }
-          }}
-        >
-          <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border border-text-hi/15 group-hover:border-accent/80 flex items-center justify-center bg-ink-raise/20 backdrop-blur-md transition-all duration-500 shadow-lg relative">
-            {/* Pulsing/Rotating Accent Ring */}
-            <div className="absolute inset-0 rounded-full border border-transparent border-t-accent opacity-0 group-hover:opacity-100 group-hover:rotate-180 transition-all duration-700 ease-out" />
-            <div className="absolute inset-[-4px] rounded-full border border-accent/20 scale-90 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-500 animate-pulse" />
-
-            {/* Play Triangle SVG */}
-            <svg
-              width="24"
-              height="28"
-              viewBox="0 0 18 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="ml-1.5 text-text-hi group-hover:text-accent transition-colors duration-300 transform group-hover:scale-105"
-            >
-              <path
-                d="M2 2L15 10L2 18V2Z"
-                fill="currentColor"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </div>
-        </div>
 
         {/* Headline */}
         <h1
@@ -242,7 +162,7 @@ export function Hero() {
           >
             Quem somos
           </button>
-          
+
           <button
             onClick={() => setIsModalOpen(true)}
             className="magnetic-btn group flex items-center gap-2.5 font-display text-base md:text-lg tracking-widest border border-text-mut/30 hover:border-text-hi text-text-hi px-6 py-3 rounded transition-all duration-300 uppercase cursor-pointer"
@@ -272,9 +192,8 @@ export function Hero() {
       <VideoModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        videoUrl="https://www.youtube.com/watch?v=88R8UwRvBPE"
+        videoUrl={`https://www.youtube.com/watch?v=${YT_ID}`}
       />
     </section>
   );
 }
-
