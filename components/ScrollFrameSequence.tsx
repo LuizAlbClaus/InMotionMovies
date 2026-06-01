@@ -7,20 +7,20 @@ import { useReducedMotion } from "@/lib/useReducedMotion";
 /**
  * ScrollFrameSequence
  * -------------------
- * Player canvas estilo Apple (AirPods): mapeia a posição do scroll a uma
- * sequência de frames (imagens) e desenha o frame correto no <canvas>.
+ * Player de animação cinematográfica com 3 modos automáticos:
  *
- * Pensado para receber a pasta de frames exportada do Veo 3.1 via ffmpeg.
- * Ex.: ffmpeg -i lente.mp4 -vf "fps=15,scale=1280:-1" -q:v 5 public/frames/lente/%03d.webp
+ *  - "scrub"  (desktop): canvas estilo Apple — o scroll dirige a sequência de frames.
+ *  - "video"  (mobile/saveData, se `mobileVideoSrc`): vídeo autoplay mudo inline; o
+ *             `currentTime` dirige o `progress` (overlays animam sozinhos, sem custo de scrub).
+ *  - "poster" (prefers-reduced-motion, ou mobile sem vídeo): 1 frame estático, progress = 1.
  *
- * Uso:
- *   <ScrollFrameSequence framesPath="/frames/lente" frameCount={120}>
- *     <h1 className="font-display ...">Filmes que fazem empresas parecerem gigantes.</h1>
- *   </ScrollFrameSequence>
+ * O overlay (children) pode ser função (progress: 0→1) => ReactNode e funciona IGUAL nos 3 modos.
  *
- * - children são renderizados POR CIMA do canvas (headline, logos, CTA).
- * - Respeita prefers-reduced-motion e cai para frame estático em mobile/saveData.
+ * Frames: ffmpeg -i v.mp4 -vf "fps=15,scale=1280:720" -c:v libwebp -quality 80 public/frames/x/%03d.webp
+ * Vídeo mobile: ffmpeg -i v.mp4 -an -c:v libx264 -crf 26 -movflags +faststart public/video/x.mp4
  */
+type Mode = "scrub" | "video" | "poster";
+
 export type ScrollFrameSequenceProps = {
   /** Pasta dentro de /public, sem barra final. Ex.: "/frames/lente" */
   framesPath: string;
@@ -34,28 +34,31 @@ export type ScrollFrameSequenceProps = {
   startIndex?: number;
   /** Altura da região de scroll, em múltiplos da viewport (default 3 → 300vh) */
   scrollHeightVh?: number;
-  /** object-fit do frame no canvas (default "cover") */
+  /** object-fit do frame/vídeo (default "cover") */
   fit?: "cover" | "contain";
   /** Quantos frames pré-carregar antes de revelar (default 12) */
   preloadCount?: number;
   /** Suavização do scrub do ScrollTrigger (default 0.5) */
   scrub?: number | boolean;
-  /** Em telas pequenas / saveData, mostrar frame estático em vez de scrubar (default true) */
+  /** Em telas pequenas / saveData, NÃO scrubar (default true) */
   staticOnMobile?: boolean;
-  /** Breakpoint (px) abaixo do qual o fallback mobile vale (default 768) */
+  /** Breakpoint (px) abaixo do qual o modo mobile vale (default 768) */
   mobileBreakpoint?: number;
   /** Frame (1-based, no espaço de startIndex) usado como pôster/fallback. Default: último */
   posterIndex?: number;
-  /** Callback com o progresso do scroll (0→1). Útil pra sincronizar overlays (logos). */
+  /** MP4 mudo para o modo mobile (autoplay inline). Se ausente, mobile cai pra pôster estático. */
+  mobileVideoSrc?: string;
+  /** Imagem de pôster do vídeo mobile (default: primeiro frame). */
+  poster?: string;
+  /** Callback com o progresso (0→1). Sincroniza overlays (logos). */
   onProgress?: (progress: number) => void;
   /**
-   * Conteúdo por cima do canvas. Pode ser ReactNode OU uma função
-   * (progress: 0→1) => ReactNode, para animar overlays em sincronia com o scroll
-   * (ex.: revelar logos). No modo estático/mobile o progress recebido é 1.
+   * Conteúdo por cima. ReactNode OU (progress: 0→1) => ReactNode (anima overlays em
+   * sincronia com scroll/vídeo). No modo "poster" o progress é 1 (estado final).
    */
   children?: React.ReactNode | ((progress: number) => React.ReactNode);
   className?: string;
-  /** Cor de fundo enquanto os frames carregam (default "var(--ink-abyss)") */
+  /** Cor de fundo enquanto carrega (default "var(--ink-abyss)") */
   background?: string;
 };
 
@@ -72,6 +75,8 @@ export function ScrollFrameSequence({
   staticOnMobile = true,
   mobileBreakpoint = 768,
   posterIndex,
+  mobileVideoSrc,
+  poster,
   onProgress,
   children,
   className = "",
@@ -80,6 +85,7 @@ export function ScrollFrameSequence({
   const wrapRef = useRef<HTMLDivElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const stateRef = useRef({ frame: 0 });
   const lastDrawnRef = useRef(-1);
@@ -87,10 +93,10 @@ export function ScrollFrameSequence({
 
   const isReduced = useReducedMotion();
   const [ready, setReady] = useState(false);
-  const [isStatic, setIsStatic] = useState(false);
+  const [mode, setMode] = useState<Mode>("scrub");
   const [progress, setProgress] = useState(0);
 
-  // Refs para o onUpdate do ScrollTrigger não re-inscrever a cada render.
+  // Refs pra os callbacks não re-inscreverem os listeners a cada render.
   const childIsFn = typeof children === "function";
   const onProgressRef = useRef(onProgress);
   const childIsFnRef = useRef(childIsFn);
@@ -105,7 +111,20 @@ export function ScrollFrameSequence({
     [framesPath, startIndex, pad, ext]
   );
 
-  // Decide o modo (estático vs scrub) com base em reduced-motion / mobile / saveData.
+  // Emite progresso (quantizado a 1% pro React não re-renderizar a cada frame).
+  const emitProgress = useCallback((p: number) => {
+    const clamped = p < 0 ? 0 : p > 1 ? 1 : p;
+    onProgressRef.current?.(clamped);
+    if (childIsFnRef.current) {
+      const pq = Math.round(clamped * 100) / 100;
+      if (pq !== lastProgressRef.current) {
+        lastProgressRef.current = pq;
+        setProgress(pq);
+      }
+    }
+  }, []);
+
+  // Decide o modo: reduced-motion → poster; mobile/saveData → video (se houver) ou poster; senão scrub.
   useEffect(() => {
     if (typeof window === "undefined") return;
     const decide = () => {
@@ -113,12 +132,16 @@ export function ScrollFrameSequence({
         .connection;
       const saveData = !!conn?.saveData;
       const smallScreen = window.innerWidth < mobileBreakpoint;
-      setIsStatic(isReduced || (staticOnMobile && (smallScreen || saveData)));
+      let m: Mode = "scrub";
+      if (isReduced) m = "poster";
+      else if (staticOnMobile && (smallScreen || saveData))
+        m = mobileVideoSrc ? "video" : "poster";
+      setMode(m);
     };
     decide();
     window.addEventListener("resize", decide);
     return () => window.removeEventListener("resize", decide);
-  }, [isReduced, staticOnMobile, mobileBreakpoint]);
+  }, [isReduced, staticOnMobile, mobileBreakpoint, mobileVideoSrc]);
 
   // Desenha um frame no canvas com cover/contain + devicePixelRatio.
   const drawFrame = useCallback(
@@ -155,19 +178,18 @@ export function ScrollFrameSequence({
     [fit]
   );
 
-  // Pré-carrega as imagens.
-  // - SCRUB: carrega + pré-decodifica TODOS os frames (scrub sem stall).
-  // - ESTÁTICO (mobile/reduced-motion): carrega só o pôster (evita ~MBs de bitmap à toa).
+  const posterIdx = Math.max(
+    0,
+    Math.min(frameCount - 1, (posterIndex ?? frameCount) - 1 - (startIndex - 1))
+  );
+
+  // Pré-carrega frames: TODOS no scrub; só o pôster no poster; nada no video (o <video> cuida).
   useEffect(() => {
+    if (mode === "video") return;
     let cancelled = false;
     const imgs: HTMLImageElement[] = new Array(frameCount);
-    imagesRef.current = imgs;
-    const posterIdx = Math.max(
-      0,
-      Math.min(frameCount - 1, (posterIndex ?? frameCount) - 1 - (startIndex - 1))
-    );
 
-    if (isStatic) {
+    if (mode === "poster") {
       const img = new Image();
       img.src = frameUrl(posterIdx);
       img.decoding = "async";
@@ -186,52 +208,73 @@ export function ScrollFrameSequence({
         img.onload = () => {
           if (cancelled) return;
           loaded += 1;
-          // Pré-decodifica para o bitmap já estar pronto na hora do scrub (sem stall).
           if (typeof img.decode === "function") img.decode().catch(() => {});
           if (i === 0) drawFrame(0);
-          if (loaded >= Math.min(preloadCount, frameCount) && !ready) {
-            setReady(true);
-          }
+          if (loaded >= Math.min(preloadCount, frameCount) && !ready) setReady(true);
         };
         imgs[i] = img;
       }
     }
-
+    imagesRef.current = imgs; // atribui ao ref só depois de montar o array local
     return () => {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [framesPath, frameCount, isStatic]);
+  }, [framesPath, frameCount, mode]);
 
-  // MODO ESTÁTICO (reduced-motion / mobile / saveData): desenha só o pôster.
+  // MODO POSTER: progress = 1 e desenha o pôster.
   useEffect(() => {
-    if (!isStatic) return;
-    // No fallback estático o overlay recebe progress = 1 (estado final).
-    onProgressRef.current?.(1);
-    if (childIsFnRef.current) setProgress(1);
-    const poster = (posterIndex ?? frameCount) - 1 - (startIndex - 1);
-    const idx = Math.max(0, Math.min(frameCount - 1, poster));
+    if (mode !== "poster") return;
+    emitProgress(1);
     let raf = 0;
     const tryDraw = () => {
-      const img = imagesRef.current[idx];
-      if (img && img.complete && img.naturalWidth > 0) {
-        drawFrame(idx);
-      } else {
-        raf = requestAnimationFrame(tryDraw);
-      }
+      const img = imagesRef.current[posterIdx];
+      if (img && img.complete && img.naturalWidth > 0) drawFrame(posterIdx);
+      else raf = requestAnimationFrame(tryDraw);
     };
     tryDraw();
-    const onResize = () => drawFrame(idx);
+    const onResize = () => drawFrame(posterIdx);
     window.addEventListener("resize", onResize);
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", onResize);
     };
-  }, [isStatic, posterIndex, frameCount, startIndex, drawFrame]);
+  }, [mode, posterIdx, drawFrame, emitProgress]);
+
+  // MODO VIDEO: autoplay inline; currentTime dirige o progress (rAF + quantização).
+  useEffect(() => {
+    if (mode !== "video") return;
+    const v = videoRef.current;
+    if (!v) return;
+    let raf = 0;
+    let stopped = false;
+    const loop = () => {
+      if (stopped) return;
+      const p = v.duration ? v.currentTime / v.duration : 0;
+      emitProgress(p);
+      if (v.ended || p >= 1) return; // para o loop ao fim (economiza bateria)
+      raf = requestAnimationFrame(loop);
+    };
+    // Atualiza o progress também via eventos (cobre seek/scrub e o estado após o loop parar).
+    const sync = () => emitProgress(v.duration ? v.currentTime / v.duration : 0);
+    v.addEventListener("timeupdate", sync);
+    v.addEventListener("seeked", sync);
+
+    // autoplay; se o navegador bloquear, cai pra pôster estático.
+    v.play().then(() => {
+      raf = requestAnimationFrame(loop);
+    }).catch(() => setMode("poster"));
+    return () => {
+      stopped = true;
+      cancelAnimationFrame(raf);
+      v.removeEventListener("timeupdate", sync);
+      v.removeEventListener("seeked", sync);
+    };
+  }, [mode, emitProgress]);
 
   // MODO SCRUB: ScrollTrigger pinado mapeia progresso → índice do frame.
   useEffect(() => {
-    if (isStatic || !ready || typeof window === "undefined") return;
+    if (mode !== "scrub" || !ready || typeof window === "undefined") return;
     const wrap = wrapRef.current;
     if (!wrap) return;
 
@@ -250,22 +293,12 @@ export function ScrollFrameSequence({
         },
         onUpdate: () => {
           const f = stateRef.current.frame;
-          // Desenha só quando o índice do frame muda (evita drawImage redundante).
           const idx = Math.round(f);
           if (idx !== lastDrawnRef.current) {
             lastDrawnRef.current = idx;
             drawFrame(idx);
           }
-          const p = frameCount > 1 ? f / (frameCount - 1) : 0;
-          onProgressRef.current?.(p);
-          // Quantiza o progresso → re-render do React só a cada ~1% (não a cada frame).
-          if (childIsFnRef.current) {
-            const pq = Math.round(p * 100) / 100;
-            if (pq !== lastProgressRef.current) {
-              lastProgressRef.current = pq;
-              setProgress(pq);
-            }
-          }
+          emitProgress(frameCount > 1 ? f / (frameCount - 1) : 0);
         },
       });
       return () => {
@@ -275,7 +308,7 @@ export function ScrollFrameSequence({
     }, wrap);
 
     const onResize = () => {
-      lastDrawnRef.current = -1; // força redesenho após mudar o tamanho do canvas
+      lastDrawnRef.current = -1;
       drawFrame(Math.round(stateRef.current.frame));
       ScrollTrigger.refresh();
     };
@@ -285,30 +318,43 @@ export function ScrollFrameSequence({
       window.removeEventListener("resize", onResize);
       ctx.revert();
     };
-  }, [isStatic, ready, frameCount, scrub, drawFrame]);
+  }, [mode, ready, frameCount, scrub, drawFrame, emitProgress]);
 
   // ---- Render ----
-  // Estático: ocupa 1 viewport. Scrub: a região tem scrollHeightVh viewports
-  // e o conteúdo fica "sticky" no topo durante a rolagem.
   const overlay =
     typeof children === "function"
       ? (children as (p: number) => React.ReactNode)(progress)
       : children;
+  const isScrub = mode === "scrub";
   return (
     <section
       ref={wrapRef}
       className={`relative w-full ${className}`}
-      style={{ height: isStatic ? "100svh" : `${scrollHeightVh * 100}svh` }}
+      style={{ height: isScrub ? `${scrollHeightVh * 100}svh` : "100svh" }}
     >
       <div
         ref={stickyRef}
         className="sticky top-0 h-[100svh] w-full overflow-hidden"
         style={{ background }}
       >
-        <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
-        {/* Overlay: headline / logos / CTA.
-            - children ReactNode  → centralizado (uso simples)
-            - children função     → palco full-bleed relativo (controle por fase) */}
+        {mode === "video" ? (
+          <video
+            ref={videoRef}
+            src={mobileVideoSrc}
+            poster={poster ?? frameUrl(0)}
+            muted
+            playsInline
+            autoPlay
+            preload="auto"
+            disablePictureInPicture
+            className={`absolute inset-0 h-full w-full ${
+              fit === "cover" ? "object-cover" : "object-contain"
+            }`}
+          />
+        ) : (
+          <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
+        )}
+        {/* Overlay */}
         {overlay &&
           (typeof children === "function" ? (
             <div className="pointer-events-none absolute inset-0 z-10">
