@@ -6,6 +6,17 @@ import { LensSealRing } from "./LensSealRing";
 
 const clamp = (v: number, min = 0, max = 1) => Math.max(min, Math.min(max, v));
 
+/**
+ * Easing "back-out": passa um pouco do alvo e assenta (overshoot → settle).
+ * Com o scrub suavizado (~1.2s de catch-up ao soltar o scroll), isso vira um
+ * assentamento elástico VISÍVEL no instante em que o scroll para — em vez de
+ * a animação congelar de uma vez. s controla a intensidade do overshoot.
+ */
+const backOut = (t: number, s = 1.70158) => {
+  const u = t - 1;
+  return 1 + (s + 1) * u * u * u + s * u * u;
+};
+
 /** Nº de frames em /public/frames/lente (gerado do Video.mp4 a 15fps). */
 const FRAME_COUNT = 120;
 
@@ -75,6 +86,11 @@ export function LensHero() {
           // (0.5→0.7). Sem isso, escalar um elemento com mask-image re-rasteriza a máscara
           // a cada quadro → cintilação no meio da animação. Um flip só, sem thrash.
           const markActive = p > 0.46 && p < 0.74;
+          // Escala da marca com overshoot (assentamento elástico na chegada).
+          const markScale = 0.88 + backOut(markIn) * 0.12;
+          // "idle" (0→1): liga o respiro contínuo só na reta final (90%→100%),
+          // pra composição nunca congelar seca quando o scroll termina.
+          const idle = clamp((p - 0.9) / 0.1);
           return (
             <>
               {/* Fase 1 — Headline / teaser */}
@@ -109,6 +125,7 @@ export function LensHero() {
                 {/* Anel de selos (rack-focus). Oval vertical no mobile. */}
                 <LensSealRing
                   progress={p}
+                  idle={idle}
                   revealStart={0.68}
                   radius={isMobile ? 128 : 340}
                   radiusY={isMobile ? 180 : 160}
@@ -119,12 +136,18 @@ export function LensHero() {
                   className="absolute inset-0 flex items-center justify-center"
                   style={{
                     opacity: markIn,
-                    transform: `scale(${0.88 + markIn * 0.12}) translateZ(0)`,
+                    transform: `scale(${markScale}) translateZ(0)`,
                     willChange: markActive ? "transform, opacity" : "auto",
                     backfaceVisibility: "hidden",
                   }}
                 >
-                  <InMotionMark className="relative h-12 w-[220px] md:h-20 md:w-[380px]" />
+                  {/* wrapper de respiro: anima sozinho (CSS), sem brigar com o scroll */}
+                  <div
+                    className="hero-breathe-mark"
+                    style={{ ["--idle" as string]: idle } as React.CSSProperties}
+                  >
+                    <InMotionMark className="relative h-12 w-[220px] md:h-20 md:w-[380px]" />
+                  </div>
                 </div>
               </div>
 

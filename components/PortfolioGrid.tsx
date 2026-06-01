@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { useReducedMotion } from "@/lib/useReducedMotion";
+import { VideoModal } from "./VideoModal";
 
 interface PortfolioItem {
   id: string;
@@ -10,55 +11,63 @@ interface PortfolioItem {
   client: string;
   category: string;
   image: string;
+  videoId: string; // YouTube ID
 }
 
 const PORTFOLIO_DATA: PortfolioItem[] = [
   {
-    id: "vanguard",
-    title: "Vanguard",
-    client: "Aero Dynamics",
-    category: "Campanha Comercial",
-    image: "/video/portfolio-1.png",
+    id: "uniprime",
+    title: "Amor por Floripa",
+    client: "Uniprime",
+    category: "Branded Film",
+    image: "/video/yt-uniprime.jpg",
+    videoId: "-n63Q-kmxBs",
   },
   {
-    id: "elysium",
-    title: "Elysium",
-    client: "Lux & Co",
-    category: "Fashion Film",
-    image: "/video/portfolio-2.png",
+    id: "lumma",
+    title: "AcquaVila Home Club",
+    client: "Lumma Construtora",
+    category: "Imobiliário",
+    image: "/video/yt-lumma.jpg",
+    videoId: "ryS_3OhqZSc",
   },
   {
-    id: "chronos",
-    title: "Chronos",
-    client: "Horology Lab",
+    id: "floripa",
+    title: "O Amanhã",
+    client: "Prefeitura de Florianópolis",
     category: "Institucional",
-    image: "/video/portfolio-3.png",
+    image: "/video/yt-floripa.jpg",
+    videoId: "M25yLUIiHeU",
   },
   {
-    id: "terra",
-    title: "Terra",
-    client: "Eco Horizon",
-    category: "Documentário",
-    image: "/video/portfolio-4.png",
+    id: "governo-sc",
+    title: "SC Mais Asfalto",
+    client: "Governo de Santa Catarina",
+    category: "Institucional",
+    image: "/video/yt-governo-sc.jpg",
+    videoId: "KR3wO61rN3A",
   },
   {
-    id: "aura",
-    title: "Aura",
-    client: "Iris Cosmetics",
-    category: "Campanha Digital",
-    image: "/video/portfolio-5.png",
+    id: "abapa",
+    title: "Proteína Animal",
+    client: "ABAPA",
+    category: "Agronegócio",
+    image: "/video/yt-abapa.jpg",
+    videoId: "qyJXLcD8Lgc",
   },
   {
-    id: "urbanpulse",
-    title: "Urban Pulse",
-    client: "Volt Motors",
-    category: "Commercial / Lifestyle",
-    image: "/video/portfolio-6.png",
+    id: "nova-fase",
+    title: "Nova Fase",
+    client: "Instalações Elétricas",
+    category: "Institucional",
+    image: "/video/yt-nova-fase.jpg",
+    videoId: "24hfPm1ElWw",
   },
 ];
 
 export function PortfolioGrid() {
   const isReduced = useReducedMotion();
+  const [activeVideoId, setActiveVideoId] = useState<string | null>(null);
 
   return (
     <section
@@ -81,7 +90,17 @@ export function PortfolioGrid() {
           {PORTFOLIO_DATA.map((item) => (
             <div
               key={item.id}
-              className="group relative overflow-hidden aspect-[16/10] rounded border border-ink-raise/45 bg-ink-abyss cursor-pointer transition-all duration-500 hover:border-accent/40 hover:shadow-[0_0_25px_rgba(176,36,47,0.1)]"
+              role="button"
+              tabIndex={0}
+              aria-label={`Assistir ${item.title} — ${item.client}`}
+              onClick={() => setActiveVideoId(item.videoId)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setActiveVideoId(item.videoId);
+                }
+              }}
+              className="group relative overflow-hidden aspect-[16/10] rounded border border-ink-raise/45 bg-ink-abyss cursor-pointer transition-all duration-500 hover:border-accent/40 hover:shadow-[0_0_25px_rgba(176,36,47,0.1)] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-ink-base"
             >
               {/* Dark Gradient Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-ink-abyss via-ink-abyss/40 to-transparent z-10" />
@@ -147,6 +166,12 @@ export function PortfolioGrid() {
           ))}
         </div>
       </div>
+
+      <VideoModal
+        isOpen={activeVideoId !== null}
+        onClose={() => setActiveVideoId(null)}
+        videoUrl={activeVideoId ? `https://www.youtube.com/watch?v=${activeVideoId}` : ""}
+      />
     </section>
   );
 }

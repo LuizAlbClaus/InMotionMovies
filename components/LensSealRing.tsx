@@ -5,6 +5,12 @@ import { sealLogos, type ClientLogo } from "@/lib/clientLogos";
 
 const clamp = (v: number, min = 0, max = 1) => Math.max(min, Math.min(max, v));
 
+/** Easing "back-out": overshoot → settle (assentamento elástico na chegada). */
+const backOut = (t: number, s = 1.70158) => {
+  const u = t - 1;
+  return 1 + (s + 1) * u * u * u + s * u * u;
+};
+
 /**
  * LensSealRing
  * ------------
@@ -17,6 +23,8 @@ const clamp = (v: number, min = 0, max = 1) => Math.max(min, Math.min(max, v));
  */
 export function LensSealRing({
   progress,
+  /** Fator de respiro contínuo (0→1). Liga a vida ambiente no estado final. */
+  idle = 0,
   logos = sealLogos,
   /** Raio horizontal do anel em px */
   radius = 300,
@@ -32,6 +40,7 @@ export function LensSealRing({
   blurMax = 9,
 }: {
   progress: number;
+  idle?: number;
   logos?: ClientLogo[];
   radius?: number;
   radiusY?: number;
@@ -61,14 +70,19 @@ export function LensSealRing({
   const willChange = ringActive ? "transform, opacity, filter" : "auto";
 
   return (
-    <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center">
+    <div
+      className="hero-breathe-ring pointer-events-none absolute inset-0 z-0 flex items-center justify-center"
+      style={{ ["--idle" as string]: idle } as React.CSSProperties}
+    >
       {logos.map((logo, i) => {
         const t0 = revealStart + staggerSpan * (i / Math.max(1, n - 1));
         const local = clamp((progress - t0) / resolveSpan);
+        // overshoot na chegada: assenta no raio com um leve "snap" elástico.
+        const localEased = backOut(local);
         // ângulo: começa no topo (-90°) e distribui no sentido horário
         const angle = ((-90 + (360 / n) * i) * Math.PI) / 180;
         // profundidade: entra um pouco mais "dentro" e assenta no raio ao focar
-        const depth = 0.82 + 0.18 * local;
+        const depth = 0.82 + 0.18 * localEased;
         const x = Math.cos(angle) * radius * depth;
         const y = Math.sin(angle) * rY * depth;
         // Snap do blur a 1 casa: corta repaints redundantes por micro-variação no scrub.
@@ -89,7 +103,7 @@ export function LensSealRing({
               // translateZ(0) mantém o selo na mesma camada de compositor durante o reveal,
               // evitando re-rasterização do blur quadro a quadro.
               transform: `translate(-50%, -50%) translate(${x}px, ${y}px) scale(${
-                0.9 + local * 0.1
+                0.9 + localEased * 0.1
               }) translateZ(0)`,
               // rack-focus: desfoque→nítido. brightness(0) invert(1) = branco uniforme.
               filter: `brightness(0) invert(1) blur(${blur}px)`,
