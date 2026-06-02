@@ -94,6 +94,10 @@ export function ScrollFrameSequence({
   const isReduced = useReducedMotion();
   const [ready, setReady] = useState(false);
   const [mode, setMode] = useState<Mode>("scrub");
+  // `mode` começa em "scrub" no SSR/1ª render; só após o efeito de decisão sabemos o modo
+  // real. Sem este flag, o mobile dispara o download dos N frames (ex.: 120 × ~40KB ≈ 4.8MB)
+  // ANTES de trocar pra "video" — banda jogada fora num celular. Só pré-carregamos depois.
+  const [decided, setDecided] = useState(false);
   const [progress, setProgress] = useState(0);
 
   // Refs pra os callbacks não re-inscreverem os listeners a cada render.
@@ -137,6 +141,7 @@ export function ScrollFrameSequence({
       else if (staticOnMobile && (smallScreen || saveData))
         m = mobileVideoSrc ? "video" : "poster";
       setMode(m);
+      setDecided(true);
     };
     decide();
     window.addEventListener("resize", decide);
@@ -186,8 +191,9 @@ export function ScrollFrameSequence({
   );
 
   // Pré-carrega frames: TODOS no scrub; só o pôster no poster; nada no video (o <video> cuida).
+  // Espera a decisão de modo pra não baixar frames no mobile antes de virar "video".
   useEffect(() => {
-    if (mode === "video") return;
+    if (!decided || mode === "video") return;
     let cancelled = false;
     const imgs: HTMLImageElement[] = new Array(frameCount);
 
@@ -222,7 +228,7 @@ export function ScrollFrameSequence({
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [framesPath, frameCount, mode]);
+  }, [framesPath, frameCount, mode, decided]);
 
   // MODO POSTER: progress = 1 e desenha o pôster.
   useEffect(() => {
@@ -262,13 +268,60 @@ export function ScrollFrameSequence({
     v.addEventListener("timeupdate", sync);
     v.addEventListener("seeked", sync);
 
-    // autoplay; se o navegador bloquear, cai pra pôster estático.
-    v.play().then(() => {
-      raf = requestAnimationFrame(loop);
-    }).catch(() => setMode("poster"));
+    // Autoplay resiliente. Navegadores podem rejeitar o play() no mount por motivos
+    // TEMPORÁRIOS — página ainda "hidden" (aba em background/prefetch), iOS em modo de
+    // baixo consumo, "video-only background media paused to save power" do Chrome. Em vez
+    // de cair PERMANENTEMENTE no pôster na 1ª falha, re-tentamos quando a página fica
+    // visível ou ao primeiro gesto do usuário; só depois de esgotar as tentativas é que
+    // assumimos o pôster estático.
+    let settled = false;
+    let attempts = 0;
+    const MAX_ATTEMPTS = 8;
+    const tryPlay = () => {
+      if (stopped || settled) return;
+      const playing = v.play();
+      if (!playing || typeof playing.then !== "function") {
+        settled = true;
+        raf = requestAnimationFrame(loop);
+        return;
+      }
+      playing
+        .then(() => {
+          if (stopped) return;
+          settled = true;
+          detachRetry();
+          raf = requestAnimationFrame(loop);
+        })
+        .catch(() => {
+          if (stopped || settled) return;
+          attempts += 1;
+          if (attempts >= MAX_ATTEMPTS) {
+            settled = true;
+            detachRetry();
+            setMode("poster"); // esgotou: fallback definitivo pro pôster
+          }
+        });
+    };
+    const onVisible = () => {
+      if (document.visibilityState === "visible") tryPlay();
+    };
+    const retryEvents = ["pointerdown", "touchstart", "keydown", "scroll"] as const;
+    const detachRetry = () => {
+      document.removeEventListener("visibilitychange", onVisible);
+      retryEvents.forEach((e) =>
+        window.removeEventListener(e, tryPlay, { capture: true } as EventListenerOptions)
+      );
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    retryEvents.forEach((e) =>
+      window.addEventListener(e, tryPlay, { capture: true, passive: true } as AddEventListenerOptions)
+    );
+
+    tryPlay();
     return () => {
       stopped = true;
       cancelAnimationFrame(raf);
+      detachRetry();
       v.removeEventListener("timeupdate", sync);
       v.removeEventListener("seeked", sync);
     };

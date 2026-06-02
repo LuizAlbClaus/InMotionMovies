@@ -1,30 +1,31 @@
-@import url("https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap");
+/* Satoshi agora é carregada via <link> no <head> (app/layout.tsx) — baixa em paralelo,
+   sem o serialize/render-block do @import dentro do bundle de CSS. */
 @import "tailwindcss";
 
 @font-face {
   font-family: "Rift";
-  src: url("/fonts/RiftRegular.otf") format("opentype");
+  src: url("/fonts/RiftRegular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Rift";
-  src: url("/fonts/RiftMedium.otf") format("opentype");
+  src: url("/fonts/RiftMedium.woff2") format("woff2");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Rift";
-  src: url("/fonts/RiftDemi.otf") format("opentype");
+  src: url("/fonts/RiftDemi.woff2") format("woff2");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Rift";
-  src: url("/fonts/RiftBold.otf") format("opentype");
+  src: url("/fonts/RiftBold.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
   font-display: swap;

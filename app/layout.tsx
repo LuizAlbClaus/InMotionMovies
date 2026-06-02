@@ -42,6 +42,35 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
+      <head>
+        {/* Abre cedo a conexão com o CDN da Satoshi (fonte do corpo) — economiza o
+            DNS+TLS na hora de buscar o CSS/woff2. */}
+        <link rel="preconnect" href="https://api.fontshare.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://cdn.fontshare.com" crossOrigin="anonymous" />
+        {/* Satoshi via <link> (baixa em paralelo) em vez de @import no CSS (serializa
+            depois do bundle de estilos). */}
+        <link
+          rel="stylesheet"
+          href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap"
+        />
+        {/* Preload das fontes Rift acima da dobra (hero/nav usam Regular+Medium). */}
+        <link
+          rel="preload"
+          href="/fonts/RiftRegular.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="/fonts/RiftMedium.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        {/* Primeiro frame da lente: LCP do hero no desktop e pôster do vídeo no mobile. */}
+        <link rel="preload" href="/frames/lente/001.webp" as="image" />
+      </head>
       <body>
         {/* Global Cinematic Grain overlay */}
         <div className="grain" aria-hidden="true" />

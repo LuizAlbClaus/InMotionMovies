@@ -36,7 +36,7 @@ export const cases: Record<string, CaseStudy> = {
     type: "Filme institucional",
     year: "2023",
     videoId: SHOWREEL_ID,
-    poster: "/video/portfolio-1.png",
+    poster: "/video/portfolio-1.webp",
     summary:
       "Um filme que traduz a sensação de estar no resort — não o que ele tem, mas o que ele faz você sentir.",
     challenge:
@@ -51,7 +51,7 @@ export const cases: Record<string, CaseStudy> = {
       { label: "Locação", value: "Costão do Santinho Resort, Florianópolis" },
       { label: "Captação", value: "4K · áudio direto · aéreo" },
     ],
-    bts: ["/video/service-1.png", "/video/service-2.png", "/video/portfolio-2.png", "/video/portfolio-3.png"],
+    bts: ["/video/service-1.webp", "/video/service-2.webp", "/video/portfolio-2.webp", "/video/portfolio-3.webp"],
     directorQuote:
       "Não filmamos um hotel. Filmamos a memória que o hóspede leva embora — e é isso que faz a marca parecer maior.",
     directorName: "Direção · InMotion Movies",
@@ -70,7 +70,7 @@ export const cases: Record<string, CaseStudy> = {
     type: "Fashion film",
     year: "2022",
     videoId: SHOWREEL_ID,
-    poster: "/video/portfolio-4.png",
+    poster: "/video/portfolio-4.webp",
     summary: "Um fashion film com direção estética forte para uma marca que já é referência nacional.",
     challenge:
       "Para uma marca de moda consolidada, o vídeo não pode apenas mostrar a coleção — precisa elevar a percepção e reafirmar liderança a cada temporada.",
@@ -84,7 +84,7 @@ export const cases: Record<string, CaseStudy> = {
       { label: "Locação", value: "Estúdio + externa urbana" },
       { label: "Captação", value: "4K · slow motion · color autoral" },
     ],
-    bts: ["/video/service-4.png", "/video/portfolio-5.png", "/video/portfolio-6.png", "/video/service-3.png"],
+    bts: ["/video/service-4.webp", "/video/portfolio-5.webp", "/video/portfolio-6.webp", "/video/service-3.webp"],
     directorQuote:
       "Moda é ritmo. O corte certo no tempo certo é o que separa um vídeo de produto de um filme de marca.",
     directorName: "Direção · InMotion Movies",
@@ -98,7 +98,7 @@ export const cases: Record<string, CaseStudy> = {
     type: "Institucional",
     year: "2023",
     videoId: SHOWREEL_ID,
-    poster: "/video/portfolio-2.png",
+    poster: "/video/portfolio-2.webp",
     summary: "Tirar o institucional público do lugar-comum, sem perder seriedade e alcance.",
     challenge:
       "Comunicação de governo costuma ser fria e engessada. O desafio era informar com clareza e, ao mesmo tempo, emocionar e aproximar o cidadão.",
@@ -112,7 +112,7 @@ export const cases: Record<string, CaseStudy> = {
       { label: "Locação", value: "Diversas cidades de SC" },
       { label: "Captação", value: "4K · entrevistas · aéreo" },
     ],
-    bts: ["/video/service-5.png", "/video/portfolio-3.png", "/video/portfolio-1.png", "/video/service-1.png"],
+    bts: ["/video/service-5.webp", "/video/portfolio-3.webp", "/video/portfolio-1.webp", "/video/service-1.webp"],
     directorQuote:
       "Comunicação pública não precisa ser fria. Direção é o que transforma informação em conexão.",
     directorName: "Direção · InMotion Movies",
