@@ -43,7 +43,7 @@ export function CaseContent({ caseStudy: c }: { caseStudy: CaseStudy }) {
       {/* ───────── HERO ───────── */}
       <section className="relative w-full h-[88vh] min-h-[560px] flex items-end overflow-hidden bg-ink-abyss">
         {/* Capa */}
-        <Image src={c.poster} alt={`${c.client} — ${c.title}`} fill priority className="object-cover opacity-50" sizes="100vw" />
+        <Image src={c.poster} alt={`${c.client} · ${c.title}`} fill priority className="object-cover opacity-50" sizes="100vw" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink-base via-ink-abyss/50 to-ink-abyss/70 z-10" />
 
         {/* Conteúdo do hero */}

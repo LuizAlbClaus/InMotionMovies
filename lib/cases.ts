@@ -38,9 +38,9 @@ export const cases: Record<string, CaseStudy> = {
     videoId: SHOWREEL_ID,
     poster: "/video/portfolio-1.webp",
     summary:
-      "Um filme que traduz a sensação de estar no resort — não o que ele tem, mas o que ele faz você sentir.",
+      "Um filme que traduz a sensação de estar no resort: não o que ele tem, mas o que ele faz você sentir.",
     challenge:
-      "Resorts costumam se vender por listas: piscinas, quartos, estrutura. O desafio era o oposto — capturar a emoção de uma estadia e transformar o Costão em um destino desejado, não em um folheto de comodidades.",
+      "Resorts costumam se vender por listas: piscinas, quartos, estrutura. O desafio era o oposto: capturar a emoção de uma estadia e transformar o Costão em um destino desejado, não em um folheto de comodidades.",
     concept:
       "Construímos uma narrativa sensorial: luz natural, mar, silêncio e gente real vivendo o lugar. Direção de fotografia cinematográfica, ritmo contemplativo e trilha original para criar presença, não propaganda.",
     execution:
@@ -53,7 +53,7 @@ export const cases: Record<string, CaseStudy> = {
     ],
     bts: ["/video/service-1.webp", "/video/service-2.webp", "/video/portfolio-2.webp", "/video/portfolio-3.webp"],
     directorQuote:
-      "Não filmamos um hotel. Filmamos a memória que o hóspede leva embora — e é isso que faz a marca parecer maior.",
+      "Não filmamos um hotel. Filmamos a memória que o hóspede leva embora, e é isso que faz a marca parecer maior.",
     directorName: "Direção · InMotion Movies",
     deliverables: [
       "Filme principal (90s)",
@@ -73,7 +73,7 @@ export const cases: Record<string, CaseStudy> = {
     poster: "/video/portfolio-4.webp",
     summary: "Um fashion film com direção estética forte para uma marca que já é referência nacional.",
     challenge:
-      "Para uma marca de moda consolidada, o vídeo não pode apenas mostrar a coleção — precisa elevar a percepção e reafirmar liderança a cada temporada.",
+      "Para uma marca de moda consolidada, o vídeo não pode apenas mostrar a coleção: precisa elevar a percepção e reafirmar liderança a cada temporada.",
     concept:
       "Linguagem contemporânea, color grading autoral e edição no ritmo da música. O produto aparece, mas o protagonismo é da atitude da marca.",
     execution:

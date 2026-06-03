@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { ScrollFrameSequence } from "./ScrollFrameSequence";
-import { LensSealRing } from "./LensSealRing";
 
 const clamp = (v: number, min = 0, max = 1) => Math.max(min, Math.min(max, v));
 
@@ -19,19 +18,6 @@ const backOut = (t: number, s = 1.70158) => {
 
 /** Nº de frames em /public/frames/lente (gerado do Video.mp4 a 15fps). */
 const FRAME_COUNT = 120;
-
-/** true quando a viewport é mobile (alinhado ao breakpoint do ScrollFrameSequence). */
-function useIsMobile(breakpoint = 768) {
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia(`(max-width: ${breakpoint - 1}px)`);
-    const on = () => setIsMobile(mq.matches);
-    on();
-    mq.addEventListener("change", on);
-    return () => mq.removeEventListener("change", on);
-  }, [breakpoint]);
-  return isMobile;
-}
 
 /** Marca InMotion (mesma técnica de máscara do Nav: gradiente vermelho+branco). */
 function InMotionMark({ className = "" }: { className?: string }) {
@@ -66,8 +52,6 @@ function InMotionMark({ className = "" }: { className?: string }) {
  *         centralizado (sem colisão em tela estreita).
  */
 export function LensHero() {
-  const isMobile = useIsMobile();
-
   return (
     <section id="intro" className="relative w-full bg-ink-abyss">
       <ScrollFrameSequence
@@ -91,6 +75,12 @@ export function LensHero() {
           // "idle" (0→1): liga o respiro contínuo só na reta final (90%→100%),
           // pra composição nunca congelar seca quando o scroll termina.
           const idle = clamp((p - 0.9) / 0.1);
+          // Frase-manifesto: entra DEPOIS da marca resolver, em rack-focus
+          // (desfoque→nítido), como a lente focando na ideia. Termina antes do fim
+          // do scroll → sobra um "beat" final com marca + frase nítidas.
+          const lineIn = clamp((p - 0.66) / 0.24); // 0.66→0.90
+          const lineBlur = Math.round((1 - lineIn) * 8 * 10) / 10; // px, snap p/ cortar repaints
+          const lineActive = p > 0.62 && p < 0.94;
           return (
             <>
               {/* Fase 1 — Headline / teaser */}
@@ -107,47 +97,55 @@ export function LensHero() {
                 </h2>
               </div>
 
-              {/* Fase 2+3 — payoff: marca InMotion no centro + ANEL de selos ao redor */}
+              {/* Fase 2 — payoff: marca resolve + frase-manifesto entra em rack-focus */}
               <div
                 className="absolute inset-0"
                 style={{ visibility: payoffVisible ? "visible" : "hidden" }}
               >
-                {/* scrim radial pra marca + selos destacarem do fundo da lente */}
+                {/* scrim radial pra marca + frase destacarem do fundo da lente */}
                 <div
                   aria-hidden
                   className="pointer-events-none absolute inset-0"
                   style={{
                     opacity: markIn * 0.92,
                     background:
-                      "radial-gradient(ellipse 60% 60% at center, rgba(5,5,5,0.9) 0%, rgba(5,5,5,0.5) 48%, rgba(5,5,5,0) 75%)",
+                      "radial-gradient(ellipse 62% 66% at center, rgba(5,5,5,0.92) 0%, rgba(5,5,5,0.55) 50%, rgba(5,5,5,0) 78%)",
                   }}
                 />
-                {/* Anel de selos (rack-focus). Oval vertical no mobile. */}
-                <LensSealRing
-                  progress={p}
-                  idle={idle}
-                  revealStart={0.68}
-                  radius={isMobile ? 128 : 340}
-                  radiusY={isMobile ? 180 : 160}
-                  baseHeight={isMobile ? 26 : 58}
-                />
-                {/* Marca no centro exato da íris */}
-                <div
-                  className="absolute inset-0 flex items-center justify-center"
-                  style={{
-                    opacity: markIn,
-                    transform: `scale(${markScale}) translateZ(0)`,
-                    willChange: markActive ? "transform, opacity" : "auto",
-                    backfaceVisibility: "hidden",
-                  }}
-                >
-                  {/* wrapper de respiro: anima sozinho (CSS), sem brigar com o scroll */}
+                {/* stack centralizado: marca em cima, frase logo abaixo */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-6 md:gap-9 px-6">
+                  {/* Marca no centro da íris */}
                   <div
-                    className="hero-breathe-mark"
-                    style={{ ["--idle" as string]: idle } as React.CSSProperties}
+                    style={{
+                      opacity: markIn,
+                      transform: `scale(${markScale}) translateZ(0)`,
+                      willChange: markActive ? "transform, opacity" : "auto",
+                      backfaceVisibility: "hidden",
+                    }}
                   >
-                    <InMotionMark className="relative h-12 w-[220px] md:h-20 md:w-[380px]" />
+                    {/* wrapper de respiro: anima sozinho (CSS), sem brigar com o scroll */}
+                    <div
+                      className="hero-breathe-mark"
+                      style={{ ["--idle" as string]: idle } as React.CSSProperties}
+                    >
+                      <InMotionMark className="relative h-12 w-[220px] md:h-20 md:w-[380px]" />
+                    </div>
                   </div>
+                  {/* Frase-manifesto — desfocada→nítida (a lente focando na ideia) */}
+                  <p
+                    className="font-display text-lg md:text-2xl lg:text-3xl uppercase tracking-[0.08em] leading-[1.25] text-center max-w-2xl text-text-hi"
+                    style={{
+                      opacity: lineIn,
+                      filter: `blur(${lineBlur}px)`,
+                      transform: `translateY(${(1 - lineIn) * 14}px) translateZ(0)`,
+                      willChange: lineActive ? "opacity, filter, transform" : "auto",
+                      backfaceVisibility: "hidden",
+                    }}
+                  >
+                    Nós não filmamos empresas.
+                    <br />
+                    <span className="text-accent-bright">Filmamos a versão maior delas.</span>
+                  </p>
                 </div>
               </div>
 

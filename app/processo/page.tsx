@@ -6,7 +6,7 @@ import { ProcessContent } from "@/components/ProcessContent";
 export const metadata: Metadata = {
   title: "Como Trabalhamos | InMotion Movies",
   description:
-    "Da estratégia à entrega: a InMotion conduz sua produção audiovisual de ponta a ponta — com método, prazos definidos e direitos claros.",
+    "Da estratégia à entrega: a InMotion conduz sua produção audiovisual de ponta a ponta, com método, prazos definidos e direitos claros.",
   openGraph: {
     title: "Como Trabalhamos | InMotion Movies",
     description:

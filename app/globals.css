@@ -40,6 +40,10 @@
   --text-mut: #b8b8b8;
   --accent: #b0242f;
   --accent-deep: #8e2433;
+  /* Vermelho mais claro só para eyebrows/labels pequenos — o #b0242f sobre o fundo
+     quase preto fica com contraste baixo (~2.8:1) e ilegível em texto pequeno. Este
+     tom sobe pra ~4.6:1 mantendo a identidade cinema-red. */
+  --accent-bright: #e0454f;
 }
 
 @theme {
@@ -51,6 +55,7 @@
   --color-text-mut: var(--text-mut);
   --color-accent: var(--accent);
   --color-accent-deep: var(--accent-deep);
+  --color-accent-bright: var(--accent-bright);
 
   --font-display: "Rift", sans-serif;
   --font-sans: "Satoshi", sans-serif;

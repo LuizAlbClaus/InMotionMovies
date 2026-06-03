@@ -18,10 +18,10 @@ export async function generateMetadata({
   const c = getCase(slug);
   if (!c) return { title: "Case | InMotion Movies" };
   return {
-    title: `${c.client} — ${c.title} | InMotion Movies`,
+    title: `${c.client} · ${c.title} | InMotion Movies`,
     description: c.summary,
     openGraph: {
-      title: `${c.client} — ${c.title} | InMotion Movies`,
+      title: `${c.client} · ${c.title} | InMotion Movies`,
       description: c.summary,
       type: "article",
       locale: "pt_BR",

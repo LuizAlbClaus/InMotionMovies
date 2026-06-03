@@ -65,7 +65,7 @@ export function ContactCTA() {
           
           {/* Left / Top Side: Final Narrative & Keyline */}
           <div ref={textRef} className="lg:col-span-7 space-y-8 max-w-2xl">
-            <span className="font-display text-base tracking-[0.25em] text-accent uppercase block">
+            <span className="font-display font-medium text-base tracking-[0.25em] text-accent-bright uppercase block">
               Vamos Criar Algo Grande
             </span>
 
@@ -87,7 +87,7 @@ export function ContactCTA() {
                 Imagens que transformam percepção.
               </p>
               <p>
-                Conteúdo pode gerar visualização. Mas direção gera valor — e valor percebido muda tudo. A forma como sua
+                Conteúdo pode gerar visualização. Mas direção gera valor, e valor percebido muda tudo. A forma como sua
                 marca é vista influencia diretamente como ela é percebida. Se a imagem da sua empresa ainda não transmite
                 o nível que ela realmente possui, talvez esteja na hora de mudar isso.
               </p>

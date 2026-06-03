@@ -88,7 +88,7 @@ export function About() {
         {/* Left Side: Editorial Label & Count-up */}
         <div className="md:col-span-4 flex flex-col justify-between space-y-8 md:space-y-0">
           <div>
-            <span className="font-display text-base tracking-[0.25em] text-accent uppercase block mb-3">
+            <span className="font-display font-medium text-base tracking-[0.25em] text-accent-bright uppercase block mb-3">
               Conheça a InMotion
             </span>
             <h2 className="font-display text-4xl md:text-5xl tracking-wide text-text-hi uppercase leading-none">

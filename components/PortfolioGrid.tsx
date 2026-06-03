@@ -77,7 +77,7 @@ export function PortfolioGrid() {
       <div className="max-w-7xl mx-auto px-6">
         {/* Header */}
         <div className="mb-20 text-center md:text-left">
-          <span className="font-display text-base tracking-[0.25em] text-accent uppercase block mb-3">
+          <span className="font-display font-medium text-base tracking-[0.25em] text-accent-bright uppercase block mb-3">
             Nossos Trabalhos
           </span>
           <h2 className="font-display text-4xl md:text-6xl tracking-wide text-text-hi uppercase leading-none">
@@ -92,7 +92,7 @@ export function PortfolioGrid() {
               key={item.id}
               role="button"
               tabIndex={0}
-              aria-label={`Assistir ${item.title} — ${item.client}`}
+              aria-label={`Assistir ${item.title}, ${item.client}`}
               onClick={() => setActiveVideoId(item.videoId)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {

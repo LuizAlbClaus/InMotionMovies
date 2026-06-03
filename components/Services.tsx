@@ -102,7 +102,7 @@ export function Services() {
       <div className="max-w-7xl mx-auto px-6">
         {/* Header */}
         <div className="mb-20 md:mb-32 text-center md:text-left">
-          <span className="font-display text-base tracking-[0.25em] text-accent uppercase block mb-3">
+          <span className="font-display font-medium text-base tracking-[0.25em] text-accent-bright uppercase block mb-3">
             O que fazemos
           </span>
           <h2 className="font-display text-4xl md:text-6xl tracking-wide text-text-hi uppercase leading-none">

@@ -127,14 +127,14 @@ export function Hero() {
       {/* Hero Content */}
       <div className="relative z-20 max-w-5xl mx-auto px-6 text-center flex flex-col items-center">
         {/* Accent Tag */}
-        <span className="font-display text-sm md:text-base tracking-[0.35em] text-accent uppercase mb-6 animate-pulse">
+        <span className="font-display font-medium text-sm md:text-base tracking-[0.35em] text-accent-bright uppercase mb-6">
           InMotion Movies
         </span>
 
         {/* Headline */}
         <h1
           ref={headlineRef}
-          className="font-display text-5xl md:text-7xl lg:text-8xl tracking-wide text-text-hi uppercase leading-[1.05] max-w-4xl"
+          className="font-display text-4xl md:text-5xl lg:text-6xl tracking-wide text-text-hi uppercase leading-[1.08] max-w-3xl"
         >
           Filmes que fazem empresas parecerem gigantes.
         </h1>

@@ -7,7 +7,6 @@ import { usePathname, useRouter } from "next/navigation";
 const SECTIONS: { id: string; label: string }[] = [
   { id: "sobre", label: "Sobre" },
   { id: "setores", label: "Clientes" },
-  { id: "servicos", label: "Serviços" },
   { id: "portfolio", label: "Portfólio" },
 ];
 

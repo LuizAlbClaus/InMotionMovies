@@ -23,14 +23,14 @@ const STEPS = [
   {
     num: "03",
     title: "Produção",
-    body: "Captação com equipe e equipamento profissional — 4K, áudio direto, iluminação e drone quando o projeto pede. Direção no set do início ao fim.",
+    body: "Captação com equipe e equipamento profissional: 4K, áudio direto, iluminação e drone quando o projeto pede. Direção no set do início ao fim.",
     you: "Acompanhamento opcional na filmagem.",
     time: "1 a 3 diárias",
   },
   {
     num: "04",
     title: "Pós-produção & Entrega",
-    body: "Montagem, color grading, trilha, motion e finalização. Entregamos nos formatos certos para cada canal — do filme principal aos cortes para redes.",
+    body: "Montagem, color grading, trilha, motion e finalização. Entregamos nos formatos certos para cada canal, do filme principal aos cortes para redes.",
     you: "Rodadas de revisão combinadas.",
     time: "1 a 3 semanas",
   },
@@ -39,7 +39,7 @@ const STEPS = [
 const FAQ = [
   {
     q: "Vocês cuidam da ideia e do roteiro?",
-    a: "Sim. Conduzimos do conceito à entrega. Você não precisa chegar com tudo pronto — a estratégia e a direção fazem parte do nosso trabalho.",
+    a: "Sim. Conduzimos do conceito à entrega. Você não precisa chegar com tudo pronto. A estratégia e a direção fazem parte do nosso trabalho.",
   },
   {
     q: "Atendem fora de Florianópolis?",
@@ -59,7 +59,7 @@ const FAQ = [
   },
   {
     q: "Como funciona o orçamento?",
-    a: "Sob medida por projeto — o valor reflete escopo, ambição e entregáveis. Conte o que você precisa e montamos uma proposta itemizada.",
+    a: "Sob medida por projeto. O valor reflete escopo, ambição e entregáveis. Conte o que você precisa e montamos uma proposta itemizada.",
   },
 ];
 
@@ -101,14 +101,14 @@ export function ProcessContent() {
       {/* HERO / TESE */}
       <section className="relative w-full pt-36 md:pt-48 pb-20 md:pb-28 bg-ink-abyss border-b border-ink-raise/30">
         <div className="max-w-5xl mx-auto px-6">
-          <span className="font-display text-sm md:text-base tracking-[0.3em] text-accent uppercase block mb-5">
+          <span className="font-display font-medium text-sm md:text-base tracking-[0.3em] text-accent-bright uppercase block mb-5">
             Como trabalhamos
           </span>
           <h1 className="font-display text-4xl md:text-6xl lg:text-7xl tracking-wide text-text-hi uppercase leading-[1.05] mb-8 max-w-4xl">
             Conduzimos do conceito à entrega.
           </h1>
           <p className="text-lg md:text-2xl font-light text-text-body leading-relaxed max-w-2xl">
-            Você foca no seu negócio. A InMotion conduz a produção de ponta a ponta —
+            Você foca no seu negócio. A InMotion conduz a produção de ponta a ponta,
             com método, prazo definido e zero caos.
           </p>
         </div>
@@ -163,7 +163,7 @@ export function ProcessContent() {
             </h3>
             <p className="text-base font-light text-text-mut leading-relaxed">
               Cronograma e rodadas de revisão são definidos no início e cumpridos. Decisões
-              importantes não ficam para a última hora — nada de escopo mutante e atraso.
+              importantes não ficam para a última hora. Nada de escopo mutante e atraso.
             </p>
           </div>
           <div className="reveal-up rounded-lg border border-ink-raise/50 bg-ink-raise/15 p-8 md:p-10">
@@ -182,7 +182,7 @@ export function ProcessContent() {
       <section className="relative w-full py-24 md:py-36 bg-ink-base border-t border-ink-raise/30">
         <div className="max-w-5xl mx-auto px-6">
           <div className="reveal-up mb-14 md:mb-20">
-            <span className="font-display text-base tracking-[0.25em] text-accent uppercase block mb-3">
+            <span className="font-display font-medium text-base tracking-[0.25em] text-accent-bright uppercase block mb-3">
               Dúvidas frequentes
             </span>
             <h2 className="font-display text-3xl md:text-5xl tracking-wide text-text-hi uppercase leading-none">
