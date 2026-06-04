@@ -112,39 +112,9 @@ body {
   background: var(--accent);
 }
 
-/* Hero "respiro" — vida contínua no estado final da dobra hero.
-   Amplitude controlada por --idle (0→1): só ganha movimento quando o scroll
-   chega perto do fim, então não interfere na revelação. Composta numa camada
-   wrapper própria, sem conflitar com os transforms que o React dirige pelo scroll. */
-.hero-breathe-mark {
-  animation: heroMarkBreathe 7s ease-in-out infinite;
-  will-change: transform;
-  backface-visibility: hidden;
-}
-.hero-breathe-ring {
-  animation: heroRingBreathe 9s ease-in-out infinite;
-  will-change: transform;
-  backface-visibility: hidden;
-}
-@keyframes heroMarkBreathe {
-  0%,
-  100% {
-    transform: translate3d(0, calc(var(--idle, 0) * -3px), 0) scale(1);
-  }
-  50% {
-    transform: translate3d(0, calc(var(--idle, 0) * 3px), 0)
-      scale(calc(1 + var(--idle, 0) * 0.014));
-  }
-}
-@keyframes heroRingBreathe {
-  0%,
-  100% {
-    transform: scale(1) rotate(0deg);
-  }
-  50% {
-    transform: scale(calc(1 + var(--idle, 0) * 0.02))
-      rotate(calc(var(--idle, 0) * 0.7deg));
-  }
+/* Remove tap highlight color on interactive elements for a cleaner mobile experience */
+a, button {
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* prefers-reduced-motion standard CSS fallback */

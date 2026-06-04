@@ -68,8 +68,6 @@ export default function RootLayout({
           type="font/woff2"
           crossOrigin="anonymous"
         />
-        {/* Primeiro frame da lente: LCP do hero no desktop e pôster do vídeo no mobile. */}
-        <link rel="preload" href="/frames/lente/001.webp" as="image" />
       </head>
       <body>
         {/* Global Cinematic Grain overlay */}

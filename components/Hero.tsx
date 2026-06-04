@@ -20,10 +20,10 @@ export function Hero() {
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Monta o iframe do YouTube logo após o primeiro paint (o texto/headline já é o LCP).
-  // Fundo fica preto (bg-ink-abyss) até o vídeo carregar, então faz fade-in.
+  // Monta o iframe do YouTube após o primeiro paint apenas em telas ≥768px.
+  // Em mobile o autoplay é bloqueado pelo browser e o iframe desperdiça banda.
   useEffect(() => {
-    setShowVideo(true);
+    if (window.innerWidth >= 768) setShowVideo(true);
   }, []);
 
   // Magnetic button effect (bypassed se reduced motion)

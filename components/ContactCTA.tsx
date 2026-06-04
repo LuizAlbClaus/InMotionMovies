@@ -125,7 +125,7 @@ export function ContactCTA() {
                   </span>
                   <a
                     href="mailto:contato@inmotionmovies.com.br"
-                    className="text-lg md:text-xl text-text-body hover:text-accent transition-colors font-medium"
+                    className="text-base md:text-xl text-text-body hover:text-accent transition-colors font-medium break-all"
                   >
                     contato@inmotionmovies.com.br
                   </a>

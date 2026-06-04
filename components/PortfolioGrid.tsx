@@ -118,10 +118,10 @@ export function PortfolioGrid() {
                 sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
               />
 
-              {/* Central Play Icon on Hover */}
+              {/* Central Play Icon — always visible on mobile, hover-only on desktop */}
               <div
-                className={`absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 ${
-                  isReduced ? "" : "transform scale-90 group-hover:scale-100"
+                className={`absolute inset-0 z-20 flex items-center justify-center opacity-100 md:opacity-0 group-hover:opacity-100 transition-all duration-300 ${
+                  isReduced ? "" : "scale-100 md:scale-90 group-hover:scale-100 transform"
                 }`}
               >
                 <div className="w-14 h-14 rounded-full bg-accent/90 border border-accent flex items-center justify-center shadow-[0_0_15px_rgba(176,36,47,0.4)]">

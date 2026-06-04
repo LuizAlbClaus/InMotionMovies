@@ -1,6 +1,5 @@
 import React from "react";
 import { Nav } from "@/components/Nav";
-import { LensHero } from "@/components/LensHero";
 import { Hero } from "@/components/Hero";
 import { ClientLogos } from "@/components/ClientLogos";
 import { About } from "@/components/About";
@@ -15,7 +14,6 @@ export default function Home() {
       <Nav />
       <main className="flex-1 w-full flex flex-col bg-ink-base">
         <Hero />
-        <LensHero />
         <ClientLogos />
         <About />
         <Sectors />
