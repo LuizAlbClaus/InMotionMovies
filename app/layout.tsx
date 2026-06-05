@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     url: "https://inmotionmovies.com.br",
   },
   icons: {
-    icon: "/favicon.ico",
+    apple: "/apple-icon.png",
   },
 };
 

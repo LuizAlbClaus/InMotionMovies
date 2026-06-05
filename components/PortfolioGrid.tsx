@@ -81,7 +81,7 @@ export function PortfolioGrid() {
             Nossos Trabalhos
           </span>
           <h2 className="font-display text-4xl md:text-6xl tracking-wide text-text-hi uppercase leading-none">
-            Portfólio Selecionado
+            Portfólio
           </h2>
         </div>
 

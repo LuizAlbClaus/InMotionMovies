@@ -11,24 +11,13 @@ export function Footer() {
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
         {/* Brand info */}
         <div className="flex flex-col items-center md:items-start space-y-4">
-          <div className="relative h-10 w-40">
-            <div
-              className="w-full h-full opacity-80"
-              style={{
-                backgroundImage: 'linear-gradient(to right, var(--color-accent) 19%, var(--color-text-hi) 19%), linear-gradient(to right, var(--color-text-mut) 100%)',
-                backgroundSize: '100% 75%, 100% 18%',
-                backgroundPosition: 'top left, bottom left',
-                backgroundRepeat: 'no-repeat',
-                WebkitMaskImage: 'url(/inmotion-logo.png)',
-                WebkitMaskSize: 'contain',
-                WebkitMaskRepeat: 'no-repeat',
-                WebkitMaskPosition: 'left center',
-                maskImage: 'url(/inmotion-logo.png)',
-                maskSize: 'contain',
-                maskRepeat: 'no-repeat',
-                maskPosition: 'left center',
-              }}
-              title="InMotion Movies Logo"
+          <div className="relative h-12 w-44 opacity-90">
+            <Image
+              src="/logo-inmotion-full.png"
+              alt="InMotion Movies — Produtora Audiovisual"
+              fill
+              sizes="176px"
+              className="object-contain object-center md:object-left"
             />
           </div>
           <p className="font-display text-base tracking-widest text-text-mut uppercase">

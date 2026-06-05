@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { ScrollFrameSequence } from "./ScrollFrameSequence";
 
 const clamp = (v: number, min = 0, max = 1) => Math.max(min, Math.min(max, v));
@@ -19,29 +20,18 @@ const backOut = (t: number, s = 1.70158) => {
 /** Nº de frames em /public/frames/lente (gerado do Video.mp4 a 15fps). */
 const FRAME_COUNT = 120;
 
-/** Marca InMotion (mesma técnica de máscara do Nav: gradiente vermelho+branco). */
+/** Marca InMotion — logo principal (versão escura, com tagline) sobre a íris. */
 function InMotionMark({ className = "" }: { className?: string }) {
   return (
-    <div
-      className={className}
-      role="img"
-      aria-label="InMotion Movies"
-      style={{
-        backgroundImage:
-          "linear-gradient(to right, var(--color-accent) 19%, var(--color-text-hi) 19%), linear-gradient(to right, var(--color-text-mut) 100%)",
-        backgroundSize: "100% 75%, 100% 18%",
-        backgroundPosition: "top left, bottom left",
-        backgroundRepeat: "no-repeat",
-        WebkitMaskImage: "url(/inmotion-logo.png)",
-        WebkitMaskSize: "contain",
-        WebkitMaskRepeat: "no-repeat",
-        WebkitMaskPosition: "center",
-        maskImage: "url(/inmotion-logo.png)",
-        maskSize: "contain",
-        maskRepeat: "no-repeat",
-        maskPosition: "center",
-      }}
-    />
+    <div className={`relative ${className}`} role="img" aria-label="InMotion Movies">
+      <Image
+        src="/logo-inmotion-full.png"
+        alt="InMotion Movies"
+        fill
+        sizes="(min-width: 768px) 380px, 220px"
+        className="object-contain"
+      />
+    </div>
   );
 }
 
