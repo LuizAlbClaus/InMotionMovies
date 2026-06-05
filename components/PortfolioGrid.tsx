@@ -78,7 +78,7 @@ export function PortfolioGrid() {
         {/* Header */}
         <div className="mb-20 text-center md:text-left">
           <span className="font-display font-medium text-base tracking-[0.25em] text-accent-bright uppercase block mb-3">
-            Nossos Trabalhos
+            Alguns de nossos trabalhos
           </span>
           <h2 className="font-display text-4xl md:text-6xl tracking-wide text-text-hi uppercase leading-none">
             Portfólio
