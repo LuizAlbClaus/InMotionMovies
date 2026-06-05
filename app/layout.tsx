@@ -23,6 +23,21 @@ export const metadata: Metadata = {
     type: "website",
     locale: "pt_BR",
     url: "https://inmotionmovies.com.br",
+    images: [
+      {
+        url: "https://inmotionmovies.com.br/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "InMotion Movies | Produtora Audiovisual Premium",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "InMotion Movies | Produtora Audiovisual Premium",
+    description:
+      "Produções cinematográficas, campanhas publicitárias e conteúdo estratégico para marcas que querem parecer gigantes.",
+    images: ["https://inmotionmovies.com.br/og-image.png"],
   },
   icons: {
     apple: "/apple-icon.png",
