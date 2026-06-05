@@ -68,6 +68,8 @@ export default function RootLayout({
           type="font/woff2"
           crossOrigin="anonymous"
         />
+        {/* Poster do showreel: pintura instantânea do fundo do hero enquanto o vídeo carrega. */}
+        <link rel="preload" href="/video/showreel-poster.jpg" as="image" />
       </head>
       <body>
         {/* Global Cinematic Grain overlay */}

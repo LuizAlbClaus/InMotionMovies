@@ -5,26 +5,64 @@ import { gsap } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import { VideoModal } from "./VideoModal";
 
-const YT_ID = "88R8UwRvBPE";
-// youtube-nocookie + sem enablejsapi = embed mais leve para background.
-const BG_SRC = `https://www.youtube-nocookie.com/embed/${YT_ID}?autoplay=1&mute=1&loop=1&playlist=${YT_ID}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&disablekb=1`;
+const YT_ID = "88R8UwRvBPE"; // showreel completo (com áudio) — só no lightbox sob clique
 
 export function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const subheadlineRef = useRef<HTMLParagraphElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const isReduced = useReducedMotion();
-  const [showVideo, setShowVideo] = useState(false);
-  const [videoLoaded, setVideoLoaded] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Monta o iframe do YouTube após o primeiro paint apenas em telas ≥768px.
-  // Em mobile o autoplay é bloqueado pelo browser e o iframe desperdiça banda.
+  // Background showreel = MP4 self-hosted (autoplay mudo + playsinline). Toca de forma
+  // confiável no mobile, ao contrário do iframe do YouTube. O src é atribuído via ref no
+  // mount (não em state, pra evitar re-render e mismatch de hidratação): 480p (~5MB) no
+  // mobile e 720p no desktop — o poster cobre o tick até o primeiro frame.
+  // Garante ainda muted+play robusto: iOS exige muted no load (o atributo do React nem
+  // sempre reflete a tempo → forçamos via ref). Re-tenta no canplay, ao voltar a aba pro
+  // foco e — último recurso — na primeira interação. Cobre Low Power Mode / autoplay adiado.
   useEffect(() => {
-    if (window.innerWidth >= 768) setShowVideo(true);
-  }, []);
+    if (isReduced) return;
+    const v = videoRef.current;
+    if (!v) return;
+
+    v.src = window.innerWidth < 768 ? "/video/showreel-sm.mp4" : "/video/showreel.mp4";
+
+    const tryPlay = () => {
+      v.muted = true;
+      const p = v.play();
+      if (p) p.catch(() => {});
+    };
+
+    tryPlay();
+    v.addEventListener("canplay", tryPlay);
+
+    const onVisible = () => {
+      if (document.visibilityState === "visible") tryPlay();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+
+    const onInteract = () => {
+      tryPlay();
+      window.removeEventListener("touchstart", onInteract);
+      window.removeEventListener("pointerdown", onInteract);
+      window.removeEventListener("scroll", onInteract);
+    };
+    window.addEventListener("touchstart", onInteract, { passive: true });
+    window.addEventListener("pointerdown", onInteract, { passive: true });
+    window.addEventListener("scroll", onInteract, { passive: true });
+
+    return () => {
+      v.removeEventListener("canplay", tryPlay);
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("touchstart", onInteract);
+      window.removeEventListener("pointerdown", onInteract);
+      window.removeEventListener("scroll", onInteract);
+    };
+  }, [isReduced]);
 
   // Magnetic button effect (bypassed se reduced motion)
   useEffect(() => {
@@ -80,11 +118,15 @@ export function Hero() {
     }
 
     if (buttonsRef.current) {
+      // O wrapper carrega a classe opacity-0 (estado inicial pré-JS). Precisamos revelá-lo
+      // — senão os botões internos animam dentro de um container invisível e os CTAs
+      // (incl. mobile) nunca aparecem.
+      tl.to(buttonsRef.current, { opacity: 1, duration: 0.4 }, "-=0.6");
       tl.fromTo(
         buttonsRef.current.querySelectorAll("button"),
         { opacity: 0, y: 15 },
         { opacity: 1, y: 0, duration: 0.8, stagger: 0.1 },
-        "-=0.6"
+        "<"
       );
     }
   }, [isReduced]);
@@ -104,23 +146,28 @@ export function Hero() {
         {/* Gradiente escuro para garantir contraste do texto */}
         <div className="absolute inset-0 bg-gradient-to-t from-ink-base via-ink-base/30 to-ink-abyss/85 z-10" />
 
-        {/* Background YouTube (montado após idle, fade-in ao carregar; fundo preto até lá) */}
-        {showVideo && (
-          <div
-            className={`absolute inset-0 w-full h-full overflow-hidden z-[1] transition-opacity duration-1000 ${
-              videoLoaded ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            <iframe
-              src={BG_SRC}
-              title="InMotion Movies Showreel"
-              loading="lazy"
-              onLoad={() => setVideoLoaded(true)}
-              className="absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-h-full min-w-[177.77vh] -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-25"
-              allow="autoplay; encrypted-media; picture-in-picture"
-              frameBorder="0"
-            />
-          </div>
+        {/* Background showreel — vídeo nativo. O poster (frame do próprio showreel) aparece
+            instantâneo; com +faststart no MP4 a reprodução começa assim que o primeiro chunk
+            chega. opacity-25 constante = transição imperceptível entre poster e vídeo. */}
+        {isReduced ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src="/video/showreel-poster.jpg"
+            alt=""
+            aria-hidden="true"
+            className="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto -translate-x-1/2 -translate-y-1/2 object-cover opacity-25 z-[1]"
+          />
+        ) : (
+          <video
+            ref={videoRef}
+            className="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto -translate-x-1/2 -translate-y-1/2 object-cover opacity-25 z-[1]"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            poster="/video/showreel-poster.jpg"
+          />
         )}
       </div>
 
