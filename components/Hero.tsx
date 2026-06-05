@@ -230,7 +230,7 @@ export function Hero() {
             onClick={() => scrollToSection("contato")}
             className="magnetic-btn font-display text-base md:text-lg tracking-widest bg-accent hover:bg-accent-deep text-text-hi px-8 py-3 rounded border border-accent/25 transition-all duration-300 uppercase cursor-pointer"
           >
-            Agendar Reunião
+            Whatsapp
           </button>
         </div>
       </div>

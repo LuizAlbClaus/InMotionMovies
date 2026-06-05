@@ -149,7 +149,7 @@ export function ContactCTA() {
                 rel="noopener noreferrer"
                 className="cta-button w-full block text-center font-display text-lg tracking-widest bg-accent hover:bg-accent-deep text-text-hi py-4 rounded border border-accent/20 transition-all duration-300 uppercase shadow-[0_0_20px_rgba(176,36,47,0.15)] hover:shadow-[0_0_30px_rgba(176,36,47,0.35)]"
               >
-                Agendar Reunião
+                Whatsapp
               </a>
             </div>
           </div>
