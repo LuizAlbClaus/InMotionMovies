@@ -130,22 +130,22 @@ export function ProcessContent() {
                   <h2 className="font-display text-2xl md:text-3xl tracking-wide text-text-hi uppercase leading-tight mb-3">
                     {step.title}
                   </h2>
-                  <p className="text-[15px] md:text-lg font-normal md:font-light text-text-body md:text-text-mut leading-relaxed">
+                  <p className="text-base md:text-lg font-normal text-text-body leading-relaxed">
                     {step.body}
                   </p>
                 </div>
                 <div className="md:col-span-4 flex flex-col gap-4 md:pl-6 md:border-l border-ink-raise/40">
                   <div>
-                    <span className="font-display text-xs tracking-widest text-accent/70 uppercase block mb-1">
+                    <span className="font-display text-xs tracking-widest text-accent-bright uppercase block mb-1">
                       Você participa
                     </span>
-                    <span className="text-sm text-text-body font-normal md:font-light">{step.you}</span>
+                    <span className="text-sm text-text-body font-normal">{step.you}</span>
                   </div>
                   <div>
-                    <span className="font-display text-xs tracking-widest text-accent/70 uppercase block mb-1">
+                    <span className="font-display text-xs tracking-widest text-accent-bright uppercase block mb-1">
                       Prazo típico
                     </span>
-                    <span className="text-sm text-text-body/80 font-light">{step.time}</span>
+                    <span className="text-sm text-text-body font-normal">{step.time}</span>
                   </div>
                 </div>
               </div>
@@ -161,7 +161,7 @@ export function ProcessContent() {
             <h3 className="font-display text-xl md:text-2xl tracking-wide text-text-hi uppercase mb-4">
               Prazos & revisões
             </h3>
-            <p className="text-[15px] md:text-base font-normal md:font-light text-text-body md:text-text-mut leading-relaxed">
+            <p className="text-base font-normal text-text-body leading-relaxed">
               Cronograma e rodadas de revisão são definidos no início e cumpridos. Decisões
               importantes não ficam para a última hora. Nada de escopo mutante e atraso.
             </p>
@@ -170,7 +170,7 @@ export function ProcessContent() {
             <h3 className="font-display text-xl md:text-2xl tracking-wide text-text-hi uppercase mb-4">
               Direitos & entrega
             </h3>
-            <p className="text-[15px] md:text-base font-normal md:font-light text-text-body md:text-text-mut leading-relaxed">
+            <p className="text-base font-normal text-text-body leading-relaxed">
               Você recebe os arquivos finais e os direitos de uso acordados, nos formatos
               certos para cada plataforma. Sem licença que expira, sem cobrança escondida por uso.
             </p>
@@ -195,7 +195,7 @@ export function ProcessContent() {
                 <h3 className="font-display text-lg md:text-xl text-text-hi mb-2 leading-snug">
                   {item.q}
                 </h3>
-                <p className="text-[15px] md:text-base font-normal md:font-light text-text-body md:text-text-mut leading-relaxed">{item.a}</p>
+                <p className="text-base font-normal text-text-body leading-relaxed">{item.a}</p>
               </div>
             ))}
           </div>
@@ -208,7 +208,7 @@ export function ProcessContent() {
           <h2 className="font-display text-3xl md:text-5xl tracking-wide text-text-hi uppercase leading-tight mb-6">
             Pronto para criar algo grande?
           </h2>
-          <p className="text-[15px] md:text-lg font-normal md:font-light text-text-body md:text-text-mut leading-relaxed mb-10 max-w-xl mx-auto">
+          <p className="text-base md:text-lg font-normal text-text-body leading-relaxed mb-10 max-w-xl mx-auto">
             Conte o que sua marca precisa. Montamos a proposta e conduzimos o resto.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
